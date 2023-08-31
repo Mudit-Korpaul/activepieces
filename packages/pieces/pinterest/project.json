@@ -1,0 +1,42 @@
+{
+  "name": "pieces-pinterest",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/pieces/pinterest/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/pieces/pinterest",
+        "tsConfig": "packages/pieces/pinterest/tsconfig.lib.json",
+        "packageJson": "packages/pieces/pinterest/package.json",
+        "main": "packages/pieces/pinterest/src/index.ts",
+        "assets": [
+          "packages/pieces/pinterest/*.md"
+        ],
+        "buildableProjectDepsInPackageJsonType": "dependencies"
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs pieces-pinterest {args.ver} {args.tag}",
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "packages/pieces/pinterest/**/*.ts"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
