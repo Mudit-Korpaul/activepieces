@@ -1,0 +1,42 @@
+{
+  "name": "pieces-ora",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/pieces/ora/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/pieces/ora",
+        "tsConfig": "packages/pieces/ora/tsconfig.lib.json",
+        "packageJson": "packages/pieces/ora/package.json",
+        "main": "packages/pieces/ora/src/index.ts",
+        "assets": [
+          "packages/pieces/ora/*.md"
+        ],
+        "buildableProjectDepsInPackageJsonType": "dependencies"
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs pieces-ora {args.ver} {args.tag}",
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "packages/pieces/ora/**/*.ts"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
