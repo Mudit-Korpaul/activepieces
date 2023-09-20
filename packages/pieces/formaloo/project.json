@@ -1,0 +1,42 @@
+{
+  "name": "pieces-formaloo",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/pieces/formaloo/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/pieces/formaloo",
+        "tsConfig": "packages/pieces/formaloo/tsconfig.lib.json",
+        "packageJson": "packages/pieces/formaloo/package.json",
+        "main": "packages/pieces/formaloo/src/index.ts",
+        "assets": [
+          "packages/pieces/formaloo/*.md"
+        ],
+        "buildableProjectDepsInPackageJsonType": "dependencies"
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs pieces-formaloo {args.ver} {args.tag}",
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "packages/pieces/formaloo/**/*.ts"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
