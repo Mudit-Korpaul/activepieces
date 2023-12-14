@@ -1,0 +1,44 @@
+{
+  "name": "pieces-heartbeat",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/pieces/heartbeat/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/pieces/heartbeat",
+        "tsConfig": "packages/pieces/heartbeat/tsconfig.lib.json",
+        "packageJson": "packages/pieces/heartbeat/package.json",
+        "main": "packages/pieces/heartbeat/src/index.ts",
+        "assets": [
+          "packages/pieces/heartbeat/*.md"
+        ],
+        "buildableProjectDepsInPackageJsonType": "dependencies",
+        "updateBuildableProjectDepsInPackageJson": true
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs pieces-heartbeat {args.ver} {args.tag}",
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "packages/pieces/heartbeat/**/*.ts",
+          "packages/pieces/heartbeat/package.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
