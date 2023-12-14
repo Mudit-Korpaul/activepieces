@@ -1,5 +1,7 @@
 import { HeartbeatClient } from './client';
 import { Property } from '@activepieces/pieces-framework';
+import { Processors } from '@activepieces/pieces-framework';
+import { ProcessorFn } from 'packages/pieces/framework/src/lib/processors/types';
 
 export function makeClient(apiKey: string): HeartbeatClient {
   return new HeartbeatClient(apiKey);
@@ -34,4 +36,12 @@ export const heartbeatCommon = {
         };
       },
     }),
+};
+
+export const richTextProcessor: ProcessorFn<string, string> = (
+  property,
+  value
+) => {
+  // Your custom processing logic here
+  return `<p>${value}</p>`;
 };

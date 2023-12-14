@@ -1,4 +1,5 @@
 import { createPiece, PieceAuth } from '@activepieces/pieces-framework';
+import { sendDirectMessageAction } from './lib/actions/send-direct-message';
 export const heartbeatAuth = PieceAuth.SecretText({
   displayName: 'API Key',
   required: true,
@@ -18,6 +19,6 @@ export const heartbeat = createPiece({
   minimumSupportedRelease: '0.9.0',
   logoUrl: 'https://cdn.activepieces.com/pieces/heartbeat.png',
   authors: ['kishanprmr'],
-  actions: [],
+  actions: [sendDirectMessageAction],
   triggers: [],
 });
