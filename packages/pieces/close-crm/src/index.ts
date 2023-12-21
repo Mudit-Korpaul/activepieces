@@ -1,5 +1,5 @@
 import { createPiece, PieceAuth } from '@activepieces/pieces-framework';
-
+import { closeCRMTriggers as triggers } from './lib/triggers';
 export const closeCrmAuth = PieceAuth.SecretText({
   displayName: 'API Key',
   required: true,
@@ -17,5 +17,5 @@ export const closeCrm = createPiece({
   logoUrl: 'https://cdn.activepieces.com/pieces/close-crm.png',
   authors: [],
   actions: [],
-  triggers: [],
+  triggers: triggers,
 });

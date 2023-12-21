@@ -7,7 +7,7 @@ import {
   AuthenticationType,
 } from '@activepieces/pieces-common';
 import { closeCRMCommon } from '.';
-import { WebhookCreateRequest } from './models';
+import { WebhookCreateRequest, WebhookInformation } from './models';
 
 export class CloseCRMClient {
   constructor(private apiKey: string) {}
@@ -30,7 +30,11 @@ export class CloseCRMClient {
     });
   }
   async subscribeWebhook(request: WebhookCreateRequest) {
-    return await this.makeRequest(HttpMethod.POST, '/webhook/', request);
+    return await this.makeRequest<WebhookInformation>(
+      HttpMethod.POST,
+      '/webhook/',
+      request
+    );
   }
   async unsubscribeWebhook(webhookId: string) {
     return await this.makeRequest(HttpMethod.DELETE, `/webhook/${webhookId}/`);
