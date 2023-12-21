@@ -1,0 +1,43 @@
+{
+  "name": "pieces-close-crm",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/pieces/close-crm/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/pieces/close-crm",
+        "tsConfig": "packages/pieces/close-crm/tsconfig.lib.json",
+        "packageJson": "packages/pieces/close-crm/package.json",
+        "main": "packages/pieces/close-crm/src/index.ts",
+        "assets": [
+          "packages/pieces/close-crm/*.md"
+        ],
+        "buildableProjectDepsInPackageJsonType": "dependencies",
+        "updateBuildableProjectDepsInPackageJson": true
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs pieces-close-crm {args.ver} {args.tag}",
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "packages/pieces/close-crm/**/*.ts"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

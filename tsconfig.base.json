@@ -57,6 +57,9 @@
       "@activepieces/piece-clearout": ["packages/pieces/clearout/src/index.ts"],
       "@activepieces/piece-clickup": ["packages/pieces/clickup/src/index.ts"],
       "@activepieces/piece-clockodo": ["packages/pieces/clockodo/src/index.ts"],
+      "@activepieces/piece-close-crm": [
+        "packages/pieces/close-crm/src/index.ts"
+      ],
       "@activepieces/piece-connections": [
         "packages/pieces/connections/src/index.ts"
       ],
