@@ -302,6 +302,9 @@
       "@activepieces/piece-mautic": [
         "packages/pieces/community/mautic/src/index.ts"
       ],
+      "@activepieces/piece-microsoft-dynamics-crm": [
+        "packages/pieces/community/microsoft-dynamics-crm/src/index.ts"
+      ],
       "@activepieces/piece-microsoft-excel-365": [
         "packages/pieces/community/microsoft-excel-365/src/index.ts"
       ],
