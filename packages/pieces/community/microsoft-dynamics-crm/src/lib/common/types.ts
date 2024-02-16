@@ -16,5 +16,14 @@ export type EntityAttributeResponse = {
         HasChanged: boolean;
       };
     } | null;
-  };
+    DisplayName: {
+      UserLocalizedLabel: {
+        label: string;
+        LanguageCode: number;
+        IsManaged: boolean;
+        MetadataId: string;
+        HasChanged: boolean;
+      };
+    } | null;
+  }[];
 };

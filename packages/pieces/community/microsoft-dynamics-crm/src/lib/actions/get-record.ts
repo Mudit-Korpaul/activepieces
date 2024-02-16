@@ -7,7 +7,7 @@ import {
 import { createAction } from '@activepieces/pieces-framework';
 import { dynamicsCRMAuth } from '../../';
 import { DynamicsCRMCommon } from '../common';
-import { DynamicsCRMEntityDetails } from '../common/constants';
+import { EntityDetails } from '../common/constants';
 
 export const getRecordAction = createAction({
   auth: dynamicsCRMAuth,
@@ -23,7 +23,7 @@ export const getRecordAction = createAction({
   async run(context) {
     const { entityType, recordId } = context.propsValue;
 
-    const entityUrlPath = DynamicsCRMEntityDetails[entityType].urlPath;
+    const entityUrlPath = EntityDetails[entityType].urlPath;
 
     const request: HttpRequest = {
       method: HttpMethod.GET,

@@ -3,6 +3,9 @@ import {
   PieceAuth,
   Property,
 } from '@activepieces/pieces-framework';
+import { createRecordAction } from './lib/actions/create-record';
+import { deleteRecordAction } from './lib/actions/delete-record';
+import { getRecordAction } from './lib/actions/get-record';
 
 export const dynamicsCRMAuth = PieceAuth.OAuth2({
   props: {
@@ -31,6 +34,6 @@ export const microsoftDynamicsCrm = createPiece({
   minimumSupportedRelease: '0.20.0',
   logoUrl: 'https://cdn.activepieces.com/pieces/microsoft-dynamics-crm.png',
   authors: ['kishanprmr'],
-  actions: [],
+  actions: [createRecordAction, deleteRecordAction, getRecordAction],
   triggers: [],
 });
