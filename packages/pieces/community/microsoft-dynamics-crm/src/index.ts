@@ -1,11 +1,14 @@
+import { createCustomApiCallAction } from '@activepieces/pieces-common';
 import {
   createPiece,
+  OAuth2PropertyValue,
   PieceAuth,
   Property,
 } from '@activepieces/pieces-framework';
 import { createRecordAction } from './lib/actions/create-record';
 import { deleteRecordAction } from './lib/actions/delete-record';
 import { getRecordAction } from './lib/actions/get-record';
+import { updateRecordAction } from './lib/actions/update-record';
 
 export const dynamicsCRMAuth = PieceAuth.OAuth2({
   props: {
@@ -34,6 +37,22 @@ export const microsoftDynamicsCrm = createPiece({
   minimumSupportedRelease: '0.20.0',
   logoUrl: 'https://cdn.activepieces.com/pieces/microsoft-dynamics-crm.png',
   authors: ['kishanprmr'],
-  actions: [createRecordAction, deleteRecordAction, getRecordAction],
+  actions: [
+    createRecordAction,
+    deleteRecordAction,
+    getRecordAction,
+    updateRecordAction,
+    createCustomApiCallAction({
+      auth: dynamicsCRMAuth,
+      baseUrl: (auth) => {
+        return `${
+          (auth as OAuth2PropertyValue).props?.['hostUrl']
+        }/api/data/v9.2`;
+      },
+      authMapping: (auth) => ({
+        Authorization: `Bearer  ${(auth as OAuth2PropertyValue).access_token}`,
+      }),
+    }),
+  ],
   triggers: [],
 });

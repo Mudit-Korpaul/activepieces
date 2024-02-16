@@ -10,8 +10,16 @@ import {
   Property,
 } from '@activepieces/pieces-framework';
 import { dynamicsCRMAuth } from '../../';
+import { DynamicsCRMClient } from './client';
 import { EntityAttributeType, EntityDetails } from './constants';
-import { EntityAttributeResponse } from './types';
+
+export function makeClient(auth: PiecePropValueSchema<typeof dynamicsCRMAuth>) {
+  const client = new DynamicsCRMClient(
+    auth.props?.['hostUrl'],
+    auth.access_token
+  );
+  return client;
+}
 
 export const DynamicsCRMCommon = {
   entityType: (description: string) =>
@@ -82,175 +90,90 @@ export const DynamicsCRMCommon = {
         disabled: false,
         options: body.value.map((val) => {
           return {
-            label: val[entityprimaryNameAttribute],
+            label: val[entityprimaryNameAttribute] ?? val[entityPrimaryKey],
             value: val[entityPrimaryKey],
           };
         }),
       };
     },
   }),
-  entityFields: Property.DynamicProperties({
-    displayName: 'Entity Fields',
-    refreshers: ['auth', 'entityType'],
-    required: true,
-    props: async ({ auth, entityType }) => {
-      if (!auth) return {};
-      if (!entityType) return {};
+  entityFields: (isCreate = true) =>
+    Property.DynamicProperties({
+      displayName: 'Entity Fields',
+      refreshers: ['auth', 'entityType'],
+      required: true,
+      props: async ({ auth, entityType }) => {
+        if (!auth) return {};
+        if (!entityType) return {};
 
-      const entityUrlPath =
-        EntityDetails[entityType as unknown as string].urlPath;
-      // const entityPrimaryKey =
-      //   EntityDetails[entityType as unknown as string].primaryKey;
-      // const entityprimaryNameAttribute =
-      //   EntityDetails[entityType as unknown as string].primaryNameAttribute;
+        const fields: DynamicPropsValue = {};
 
-      const authValue = auth as PiecePropValueSchema<typeof dynamicsCRMAuth>;
+        const client = makeClient(
+          auth as PiecePropValueSchema<typeof dynamicsCRMAuth>
+        );
 
-      const fields: DynamicPropsValue = {};
+        const res = await client.fetchEntityAttributes(
+          entityType as unknown as string
+        );
 
-      const request: HttpRequest = {
-        method: HttpMethod.GET,
-        url: `${authValue.props?.['hostUrl']}/api/data/v9.2/${entityUrlPath}/Attributes`,
-        queryParams: {
-          $select: 'AttributeType,LogicalName,Description,DisplayName',
-        },
-        authentication: {
-          type: AuthenticationType.BEARER_TOKEN,
-          token: authValue.access_token,
-        },
-        headers: {
-          Accept: 'application/json',
-          'OData-MaxVersion': '4.0',
-          'OData-Version': '4.0',
-          'Content-Type': 'application/json',
-        },
-      };
-
-      const { body } = await httpClient.sendRequest<EntityAttributeResponse>(
-        request
-      );
-
-      for (const field of body.value) {
-        if (
-          ![
-            EntityAttributeType.ENTITY_NAME,
-            EntityAttributeType.LOOKUP,
-            EntityAttributeType.MEMO,
-            EntityAttributeType.MONEY,
-            EntityAttributeType.OWNER,
-            EntityAttributeType.STATE,
-          ].includes(field.AttributeType)
-        ) {
-          const params = {
-            displayName:
-              field.DisplayName?.UserLocalizedLabel.label ?? field.LogicalName,
-            description: field.Description?.UserLocalizedLabel.label ?? '',
-            required: false,
-          };
-          switch (field.AttributeType) {
-            case EntityAttributeType.BIGINT:
-            case EntityAttributeType.DECIMAL:
-            case EntityAttributeType.DOUBLE:
-            case EntityAttributeType.INTEGER:
-              fields[field.LogicalName] = Property.Number(params);
-              break;
-            case EntityAttributeType.DATETIME:
-              fields[field.LogicalName] = Property.DateTime(params);
-              break;
-            case EntityAttributeType.BOOLEAN:
-              fields[field.LogicalName] = Property.Checkbox(params);
-              break;
-            case EntityAttributeType.STRING:
-              fields[field.LogicalName] = Property.ShortText(params);
-              break;
-            case EntityAttributeType.PICKLIST:
-              const options = await retrivePicklistOptions(
-                authValue,
-                entityType as unknown as string,
-                field.LogicalName
-              );
-              fields[field.LogicalName] = Property.StaticDropdown({
-                ...params,
-                options: {
-                  disabled: false,
-                  options: options,
-                },
-              });
+        for (const field of res.value) {
+          if (
+            field.IsValidForCreate &&
+            ![
+              EntityAttributeType.ENTITY_NAME,
+              EntityAttributeType.LOOKUP,
+              EntityAttributeType.MEMO,
+              EntityAttributeType.MONEY,
+              EntityAttributeType.OWNER,
+              EntityAttributeType.VIRTUAL,
+              EntityAttributeType.UNIQUE_IDENTIFIER,
+            ].includes(field.AttributeType)
+          ) {
+            const params = {
+              displayName:
+                field.DisplayName?.UserLocalizedLabel?.Label ??
+                field.LogicalName,
+              description: field.Description?.UserLocalizedLabel?.Label ?? '',
+              required: field.IsPrimaryName && isCreate,
+            };
+            switch (field.AttributeType) {
+              case EntityAttributeType.BIGINT:
+              case EntityAttributeType.DECIMAL:
+              case EntityAttributeType.DOUBLE:
+              case EntityAttributeType.INTEGER:
+                fields[field.LogicalName] = Property.Number(params);
+                break;
+              case EntityAttributeType.DATETIME:
+                fields[field.LogicalName] = Property.DateTime(params);
+                break;
+              case EntityAttributeType.BOOLEAN:
+                fields[field.LogicalName] = Property.Checkbox(params);
+                break;
+              case EntityAttributeType.STRING:
+                fields[field.LogicalName] = Property.ShortText(params);
+                break;
+              case EntityAttributeType.PICKLIST:
+              case EntityAttributeType.STATE:
+              case EntityAttributeType.STATUS:
+                const options = await client.fetchOptionFieldValues(
+                  entityType as unknown as string,
+                  field.LogicalName,
+                  field.AttributeType
+                );
+                fields[field.LogicalName] = Property.StaticDropdown({
+                  ...params,
+                  options: {
+                    disabled: false,
+                    options: options,
+                  },
+                });
+                break;
+              default:
+                break;
+            }
           }
         }
-      }
-      return fields;
-    },
-  }),
+        return fields;
+      },
+    }),
 };
-
-async function retrivePicklistOptions(
-  auth: PiecePropValueSchema<typeof dynamicsCRMAuth>,
-  entityName: string,
-  AttributeName: string
-): Promise<{ label: string; value: string | number }[]> {
-  const request: HttpRequest = {
-    method: HttpMethod.GET,
-    url: `${auth.props?.['hostUrl']}/api/data/v9.2/EntityDefinitions(LogicalName=${entityName})/Attributes(LogicalName=${AttributeName})/Microsoft.Dynamics.CRM.PicklistAttributeMetadata`,
-    queryParams: {
-      $select: 'LogicalName',
-      $exapnd: 'OptionSet($select=Options),GlobalOptionSet($select=Options)',
-    },
-    authentication: {
-      type: AuthenticationType.BEARER_TOKEN,
-      token: auth.access_token,
-    },
-    headers: {
-      Accept: 'application/json',
-      'OData-MaxVersion': '4.0',
-      'OData-Version': '4.0',
-      'Content-Type': 'application/json',
-    },
-  };
-
-  type Response = {
-    '@odata.context': string;
-    LogicalName: string;
-    MetadataId: string;
-    OptionSet: {
-      MetadataId: string;
-      Options: {
-        Value: number;
-        Label: {
-          UserLocalizedLabel: {
-            label: string;
-            LanguageCode: number;
-            IsManaged: boolean;
-            MetadataId: string;
-            HasChanged: boolean;
-          };
-        };
-      }[];
-    } | null;
-    GlobalOptionSet: {
-      MetadataId: string;
-      Options: {
-        Value: number;
-        Label: {
-          UserLocalizedLabel: {
-            label: string;
-            LanguageCode: number;
-            IsManaged: boolean;
-            MetadataId: string;
-            HasChanged: boolean;
-          };
-        };
-      }[];
-    } | null;
-  };
-
-  const { body } = await httpClient.sendRequest<Response>(request);
-  const optionSet = body.OptionSet ?? body.GlobalOptionSet;
-  const options: { label: string; value: string | number }[] =
-    optionSet?.Options?.map(({ Value, Label }) => ({
-      value: Value,
-      label: Label.UserLocalizedLabel.label ?? String(Value),
-    })) || [];
-
-  return options;
-}

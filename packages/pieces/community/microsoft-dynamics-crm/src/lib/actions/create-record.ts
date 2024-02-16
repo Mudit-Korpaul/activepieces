@@ -1,6 +1,10 @@
-import { dynamicsCRMAuth } from '@activepieces/piece-microsoft-dynamics-crm';
-import { createAction } from '@activepieces/pieces-framework';
-import { DynamicsCRMCommon } from '../common';
+import {
+  PiecePropValueSchema,
+  createAction,
+} from '@activepieces/pieces-framework';
+import { dynamicsCRMAuth } from '../../';
+import { DynamicsCRMCommon, makeClient } from '../common';
+import { EntityDetails } from '../common/constants';
 
 export const createRecordAction = createAction({
   auth: dynamicsCRMAuth,
@@ -11,12 +15,17 @@ export const createRecordAction = createAction({
     entityType: DynamicsCRMCommon.entityType(
       'Select or map the entity for which you want to create the record.'
     ),
-    fields: DynamicsCRMCommon.entityFields,
+    fields: DynamicsCRMCommon.entityFields(true),
   },
   async run(context) {
     const { entityType, fields } = context.propsValue;
-    console.log('INSIDE RUN');
-    console.log(entityType);
-    console.log(fields);
+
+    const entityUrlPath = EntityDetails[entityType].urlPath;
+
+    const client = makeClient(
+      context.auth as PiecePropValueSchema<typeof dynamicsCRMAuth>
+    );
+
+    return await client.createRecord(entityUrlPath, fields);
   },
 });

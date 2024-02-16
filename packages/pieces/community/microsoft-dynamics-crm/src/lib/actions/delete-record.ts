@@ -1,12 +1,9 @@
 import {
-  AuthenticationType,
-  HttpMethod,
-  HttpRequest,
-  httpClient,
-} from '@activepieces/pieces-common';
-import { createAction } from '@activepieces/pieces-framework';
+  PiecePropValueSchema,
+  createAction,
+} from '@activepieces/pieces-framework';
 import { dynamicsCRMAuth } from '../../';
-import { DynamicsCRMCommon } from '../common';
+import { DynamicsCRMCommon, makeClient } from '../common';
 import { EntityDetails } from '../common/constants';
 
 export const deleteRecordAction = createAction({
@@ -25,21 +22,10 @@ export const deleteRecordAction = createAction({
 
     const entityUrlPath = EntityDetails[entityType].urlPath;
 
-    const request: HttpRequest = {
-      method: HttpMethod.DELETE,
-      url: `${context.auth.props?.['hostUrl']}/api/data/v9.2/${entityUrlPath}(${recordId})`,
-      authentication: {
-        type: AuthenticationType.BEARER_TOKEN,
-        token: context.auth.access_token,
-      },
-      headers: {
-        Accept: 'application/json',
-        'OData-MaxVersion': '4.0',
-        'OData-Version': '4.0',
-        'Content-Type': 'application/json',
-      },
-    };
-    const res = await httpClient.sendRequest(request);
-    return res.body;
+    const client = makeClient(
+      context.auth as PiecePropValueSchema<typeof dynamicsCRMAuth>
+    );
+
+    return await client.deleteRecord(entityUrlPath, recordId);
   },
 });
