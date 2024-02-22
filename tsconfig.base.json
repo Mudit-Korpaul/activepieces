@@ -128,6 +128,9 @@
       "@activepieces/piece-delay": [
         "packages/pieces/community/delay/src/index.ts"
       ],
+      "@activepieces/piece-digiforma": [
+        "packages/pieces/custom/digiforma/src/index.ts"
+      ],
       "@activepieces/piece-discord": [
         "packages/pieces/community/discord/src/index.ts"
       ],
@@ -160,6 +163,9 @@
       ],
       "@activepieces/piece-formbricks": [
         "packages/pieces/community/formbricks/src/index.ts"
+      ],
+      "@activepieces/piece-forms": [
+        "packages/pieces/community/forms/src/index.ts"
       ],
       "@activepieces/piece-frame": [
         "packages/pieces/community/frame/src/index.ts"
@@ -244,9 +250,6 @@
       ],
       "@activepieces/piece-intercom": [
         "packages/pieces/community/intercom/src/index.ts"
-      ],
-      "@activepieces/piece-forms": [
-        "packages/pieces/community/forms/src/index.ts"
       ],
       "@activepieces/piece-invoiceninja": [
         "packages/pieces/community/invoiceninja/src/index.ts"

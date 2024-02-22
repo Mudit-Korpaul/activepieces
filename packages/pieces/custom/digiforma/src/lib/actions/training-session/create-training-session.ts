@@ -1,0 +1,83 @@
+import { createAction, Property } from '@activepieces/pieces-framework';
+import { digiformaAuth } from '../../..';
+import { makeClient } from '../../common';
+import { digiformaProps } from '../../common/props';
+
+export const createTrainingSessionAction = createAction({
+  auth: digiformaAuth,
+  name: 'digiforma_create_training_session',
+  displayName: 'Create Training Session',
+  description: 'Creates a new training session.',
+  props: {
+    name: Property.ShortText({
+      displayName: 'Name',
+      required: true,
+    }),
+    ...digiformaProps.trainingSession,
+  },
+  async run(context) {
+    const {
+      name,
+      code,
+      cityCode,
+      codeFundae,
+      contracted,
+      managerId,
+      secondManagerId,
+      programId,
+      place,
+      placeName,
+      qualityAnalysis,
+      qualityExpectations,
+      qualitySuccessConditions,
+      showDatesInExtranet,
+      showPlaceInExtranet,
+      showProgramInExtranet,
+      showTraineePedagogicalTrackingInExtranet,
+      showTraineesInExtranet,
+      specialty,
+      useMap,
+      diploma,
+      diplomaTitle,
+      dpc,
+      inter,
+      remote,
+      timezone,
+      trainingType,
+      type,
+      vaeAdmissibilityDate,
+    } = context.propsValue;
+    const client = makeClient(context.auth);
+    return await client.createTrainingSession({
+      name,
+      code,
+      cityCode,
+      codeFundae,
+      contracted,
+      diploma,
+      diplomaTitle,
+      dpc,
+      inter,
+      remote,
+      timezone,
+      trainingType,
+      type,
+      vaeAdmissibilityDate,
+      managerId,
+      secondManagerId,
+      programId,
+      place,
+      placeName,
+      qualityAnalysis,
+      qualityExpectations,
+      qualitySuccessConditions,
+      showDatesInExtranet,
+      showPlaceInExtranet,
+      showProgramInExtranet,
+      showTraineePedagogicalTrackingInExtranet,
+      showTraineesInExtranet,
+      specialty,
+      useMap,
+    });
+  },
+});
