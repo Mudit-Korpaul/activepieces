@@ -12,7 +12,7 @@ export const updateSlotInTrainingSessionAction = createAction({
     trainingSessionId: digiformaCommon.trainingSessionId(true),
     trainingSubSessionId: digiformaCommon.trainingSubSessionId(true),
     slotId: Property.Dropdown({
-      displayName: 'Training Sub Session',
+      displayName: 'Training Session Slot',
       refreshers: ['trainingSessionId', 'trainingSubSessionId'],
       required: true,
       options: async ({ auth, trainingSessionId, trainingSubSessionId }) => {
