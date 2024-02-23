@@ -493,11 +493,12 @@ export const digifromaGraphQLQueries = {
   {
     trainingSession(id:$session_id)
     {
-        instructors
-        {
+        trainingSessionInstructors{
             id
-            firstname
-            lastname
+            instructor{
+                firstname
+                lastname
+            }
         }
     }
   }`,

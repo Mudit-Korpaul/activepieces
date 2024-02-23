@@ -37,7 +37,7 @@ export const digiformaCommon = {
     }),
   trainingSessionInstructorId: (required = false) =>
     Property.Dropdown<string>({
-      displayName: 'Training Session',
+      displayName: 'Training Session Instructor',
       refreshers: ['trainingSessionId'],
       required,
       options: async ({ auth, trainingSessionId }) => {
@@ -53,11 +53,16 @@ export const digiformaCommon = {
 
         return {
           disabled: false,
-          options: res['data']['trainingSession']['instructors'].map(
-            (instructor: { id: string; firstname: string; lastname: string }) => {
+          options: res['data']['trainingSession']['trainingSessionInstructors'].map(
+            (trainingInstructor: {
+              id: string;
+              instructor: { firstname: string; lastname: string };
+            }) => {
               return {
-                label: `${instructor.firstname} ${instructor.lastname}`,
-                value: instructor.id,
+                label: `${trainingInstructor.instructor.firstname ?? ''} ${
+                  trainingInstructor.instructor.lastname
+                }`,
+                value: trainingInstructor.id,
               };
             }
           ),
