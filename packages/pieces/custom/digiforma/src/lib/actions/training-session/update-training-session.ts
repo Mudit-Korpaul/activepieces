@@ -14,6 +14,9 @@ export const updateTrainingSessionAction = createAction({
       displayName: 'Name',
       required: false,
     }),
+    managerId: digiformaCommon.managerId(false, 'Administrator no.1', 'Administrator no.1'),
+    secondManagerId: digiformaCommon.managerId(false, 'Administrator no.2', 'Administrator no.2'),
+    programId: digiformaCommon.programId(false),
     ...digiformaProps.trainingSession,
   },
   async run(context) {

@@ -1,6 +1,6 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { digiformaAuth } from '../../..';
-import { makeClient } from '../../common';
+import { digiformaCommon, makeClient } from '../../common';
 import { digiformaProps } from '../../common/props';
 
 export const createTrainingSessionAction = createAction({
@@ -13,6 +13,10 @@ export const createTrainingSessionAction = createAction({
       displayName: 'Name',
       required: true,
     }),
+    managerId: digiformaCommon.managerId(true, 'Administrator no.1', 'Administrator no.1'),
+    secondManagerId: digiformaCommon.managerId(true, 'Administrator no.2', 'Administrator no.2'),
+    programId: digiformaCommon.programId(true),
+
     ...digiformaProps.trainingSession,
   },
   async run(context) {

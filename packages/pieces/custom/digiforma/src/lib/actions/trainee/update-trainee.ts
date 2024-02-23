@@ -1,4 +1,4 @@
-import { createAction } from '@activepieces/pieces-framework';
+import { createAction, Property } from '@activepieces/pieces-framework';
 import { digiformaAuth } from '../../..';
 import { digiformaCommon, makeClient } from '../../common';
 import { digiformaProps } from '../../common/props';
@@ -10,6 +10,10 @@ export const updateTraineeAction = createAction({
   description: 'Updates an existing trainee.',
   props: {
     traineeId: digiformaCommon.traineeId(true),
+    lastname: Property.ShortText({
+      displayName: 'Last Name',
+      required: false,
+    }),
     ...digiformaProps.trainee,
   },
   async run(context) {

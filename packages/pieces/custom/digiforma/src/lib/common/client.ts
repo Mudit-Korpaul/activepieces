@@ -5,7 +5,6 @@ import {
   HttpRequest,
   httpClient,
 } from '@activepieces/pieces-common';
-import { error } from 'console';
 import { digifromaGraphQLMutations } from './mutations';
 import { digifromaGraphQLQueries } from './queries';
 import {
@@ -23,16 +22,16 @@ import {
   UpdateQuotationInput,
   subsessionInput,
 } from './types';
-interface DigiformaResponse {
-  data: any;
-  errors?: {
-    code: string;
-    message: string;
-    path: string[];
-    locations: { line: number; column: number }[];
-    status_code: number;
-  }[];
-}
+// interface DigiformaResponse {
+//   data: any;
+//   errors?: {
+//     code: string;
+//     message: string;
+//     path: string[];
+//     locations: { line: number; column: number }[];
+//     status_code: number;
+//   }[];
+// }
 
 export class DigiformaClient {
   constructor(private token: string) {}
@@ -59,11 +58,11 @@ export class DigiformaClient {
         variables: variables,
       }),
     };
-    const res = await httpClient.sendRequest<DigiformaResponse>(request);
+    const res = await httpClient.sendRequest(request);
     if (res.body.errors) {
-      throw error(res.body.errors);
+      throw new Error(JSON.stringify(res.body.errors));
     }
-    return res.body.data;
+    return res.body;
   }
   async listComapnies() {
     return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listComapnies);

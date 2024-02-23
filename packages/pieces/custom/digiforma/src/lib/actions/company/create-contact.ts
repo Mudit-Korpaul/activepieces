@@ -1,4 +1,4 @@
-import { createAction } from '@activepieces/pieces-framework';
+import { createAction, Property } from '@activepieces/pieces-framework';
 import { digiformaAuth } from '../../..';
 import { digiformaCommon, makeClient } from '../../common';
 import { digiformaProps } from '../../common/props';
@@ -11,6 +11,10 @@ export const createContactInCompanyAction = createAction({
   description: 'Creates a new contact in company.',
   props: {
     id: digiformaCommon.companyId(true),
+    lastname: Property.ShortText({
+      displayName: 'Last Name',
+      required: true,
+    }),
     ...digiformaProps.contact,
   },
   async run(context) {

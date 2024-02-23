@@ -3,10 +3,6 @@ import { digiformaCommon } from '.';
 
 export const digiformaProps = {
   company: {
-    name: Property.ShortText({
-      displayName: 'Name',
-      required: false,
-    }),
     group: Property.ShortText({
       displayName: 'Group',
       required: false,
@@ -80,10 +76,6 @@ export const digiformaProps = {
   instructor: {
     firstname: Property.ShortText({
       displayName: 'First Name',
-      required: false,
-    }),
-    lastname: Property.ShortText({
-      displayName: 'Last Name',
       required: false,
     }),
     roadAddress: Property.LongText({
@@ -254,10 +246,7 @@ export const digiformaProps = {
       displayName: 'First Name',
       required: false,
     }),
-    lastname: Property.ShortText({
-      displayName: 'Last Name',
-      required: false,
-    }),
+
     roadAddress: Property.LongText({
       displayName: 'Address',
       required: false,
@@ -535,8 +524,7 @@ export const digiformaProps = {
       displayName: 'Inter Corporation ?',
       required: false,
     }),
-    managerId: digiformaCommon.managerId(true, 'Administrator no.1', 'Administrator no.1'),
-    secondManagerId: digiformaCommon.managerId(true, 'Administrator no.2', 'Administrator no.2'),
+
     place: Property.ShortText({
       displayName: 'Place',
       description: 'If no room associated with the session, address of the training location.',
@@ -547,7 +535,6 @@ export const digiformaProps = {
       description: 'If no room associated with the session, name of the training location',
       required: false,
     }),
-    programId: digiformaCommon.programId(true),
     qualityAnalysis: Property.LongText({
       displayName: 'Quality Analysis',
       description: 'Summaries of the results of satisfaction evaluations',
@@ -897,10 +884,6 @@ export const digiformaProps = {
   contact: {
     firstname: Property.ShortText({
       displayName: 'First Name',
-      required: false,
-    }),
-    lastname: Property.ShortText({
-      displayName: 'Last Name',
       required: false,
     }),
     email: Property.ShortText({
