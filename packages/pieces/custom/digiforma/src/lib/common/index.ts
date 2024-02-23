@@ -452,4 +452,58 @@ export const digiformaCommon = {
         };
       },
     }),
+  marketplaceCategoryId: (required = false) =>
+    Property.Dropdown<string>({
+      displayName: 'Marketplace Category',
+      refreshers: [],
+      required,
+      options: async ({ auth }) => {
+        if (!auth) {
+          return {
+            disabled: true,
+            options: [],
+            placeholder: 'Please connect your account',
+          };
+        }
+        const client = makeClient(auth as string);
+        const res: any = await client.listMarketplaceCategories();
+        return {
+          disabled: false,
+          options: res['data']['marketplaceCategories'].map(
+            (category: { id: string; name: string }) => {
+              return {
+                label: category.name,
+                value: category.id,
+              };
+            }
+          ),
+        };
+      },
+    }),
+  roomId: (required = false) =>
+    Property.Dropdown<string>({
+      displayName: 'Room Id',
+      refreshers: [],
+      required,
+      options: async ({ auth }) => {
+        if (!auth) {
+          return {
+            disabled: true,
+            options: [],
+            placeholder: 'Please connect your account',
+          };
+        }
+        const client = makeClient(auth as string);
+        const res: any = await client.listRooms();
+        return {
+          disabled: false,
+          options: res['data']['rooms'].map((room: { id: string; name: string }) => {
+            return {
+              label: room.name,
+              value: room.id,
+            };
+          }),
+        };
+      },
+    }),
 };

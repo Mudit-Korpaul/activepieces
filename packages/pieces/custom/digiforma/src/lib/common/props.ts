@@ -491,6 +491,20 @@ export const digiformaProps = {
     }),
   },
   trainingSession: {
+    averageDurationPerDate: Property.Number({
+      displayName: 'Duration Per Date',
+      description: 'Average duration of a slot in the date range',
+      required: false,
+    }),
+    datesAreInterval: Property.Checkbox({
+      displayName: 'Dates in interval mode?',
+      required: false,
+    }),
+    pipelineState: Property.ShortText({
+      displayName: 'Advancement stage',
+      required: false,
+    }),
+    roomId: digiformaCommon.roomId(false),
     code: Property.ShortText({
       displayName: 'Internal session code',
       required: false,
@@ -524,7 +538,12 @@ export const digiformaProps = {
       displayName: 'Inter Corporation ?',
       required: false,
     }),
-
+    professionalArea: Property.ShortText({
+      displayName: 'Professional Area',
+      description:
+        'Used only for Spain administration - Should be 4 letters from administration rules',
+      required: false,
+    }),
     place: Property.ShortText({
       displayName: 'Place',
       description: 'If no room associated with the session, address of the training location.',
@@ -563,6 +582,14 @@ export const digiformaProps = {
     }),
     showProgramInExtranet: Property.Checkbox({
       displayName: 'Card visible in the extranet?',
+      required: false,
+    }),
+    showRulesInExtranet: Property.Checkbox({
+      displayName: 'Internal regulations visible on the extranet?',
+      required: false,
+    }),
+    showSigningButtonInExtranet: Property.Checkbox({
+      displayName: 'Sign-in button automatically displayed?',
       required: false,
     }),
     showTraineePedagogicalTrackingInExtranet: Property.Checkbox({
@@ -605,7 +632,7 @@ export const digiformaProps = {
       required: false,
     }),
     useMap: Property.Checkbox({
-      displayName: 'Card visible in the extranet?',
+      displayName: 'Use Map?',
       required: false,
     }),
     vaeAdmissibilityDate: Property.DateTime({
@@ -745,6 +772,31 @@ export const digiformaProps = {
       displayName: 'Sub Title',
       required: false,
     }),
+    accessDelay: Property.Number({
+      displayName: 'Access Delay',
+      required: false,
+    }),
+    accessDelayUnit: Property.StaticDropdown({
+      displayName: 'Access Delay Unit',
+      required: false,
+      options: {
+        disabled: false,
+        options: [
+          {
+            label: 'Days',
+            value: 'DAYS',
+          },
+          {
+            label: 'Hours',
+            value: 'HOURS',
+          },
+          {
+            label: 'Weeks',
+            value: 'WEEKS',
+          },
+        ],
+      },
+    }),
     description: Property.LongText({
       displayName: 'Description',
       required: false,
@@ -782,8 +834,38 @@ export const digiformaProps = {
       displayName: 'Analytical Accounting code',
       required: false,
     }),
+    admissionModality: Property.Number({
+      displayName: 'Admission procedure',
+      required: false,
+    }),
+    active: Property.Checkbox({
+      displayName: 'Class Size?',
+      required: false,
+    }),
+    max: Property.Number({
+      displayName: 'Max Class size',
+      required: false,
+      defaultValue: 100,
+    }),
+    min: Property.Number({
+      displayName: 'Min Class size',
+      required: false,
+      defaultValue: 0,
+    }),
+    assessments: Property.Array({
+      displayName: 'Assessments',
+      required: false,
+    }),
     certifInfoCode: Property.ShortText({
       displayName: 'Certificate code',
+      required: false,
+    }),
+    certificateurContratId: Property.ShortText({
+      displayName: 'Certifier contract number',
+      required: false,
+    }),
+    certificateurId: Property.ShortText({
+      displayName: 'Certifier ID',
       required: false,
     }),
     certificationDetails: Property.LongText({
@@ -794,8 +876,107 @@ export const digiformaProps = {
       displayName: 'Certification included in additional costs?',
       required: false,
     }),
+    certificationModality: Property.StaticDropdown({
+      displayName: 'Procedures for obtaining certification',
+      required: false,
+      options: {
+        disabled: false,
+        options: [
+          {
+            label: 'Admission',
+            value: 'ADMISSION',
+          },
+          { label: 'Scoring', value: 'SCORING' },
+        ],
+      },
+    }),
+    certificationModalityAccess: Property.StaticDropdown({
+      displayName: 'Certification Modality Access',
+      required: false,
+      options: {
+        disabled: false,
+        options: [
+          {
+            label: 'CANDIDAT_LIBRE',
+            value: 'CANDIDAT_LIBRE',
+          },
+          {
+            label: 'EQUIVALENCE_DIPLOME_ETRANGER',
+            value: 'EQUIVALENCE_DIPLOME_ETRANGER',
+          },
+          {
+            label: 'FORMATION_CONTINUE_CONTRAT_DE_PROFESSIONNALISATION',
+            value: 'FORMATION_CONTINUE_CONTRAT_DE_PROFESSIONNALISATION',
+          },
+          {
+            label: 'FORMATION_CONTINUE_HORS_CONTRAT_DE_PROFESSIONNALISATION',
+            value: 'FORMATION_CONTINUE_HORS_CONTRAT_DE_PROFESSIONNALISATION',
+          },
+          {
+            label: 'FORMATION_INITIALE_APPRENTISSAGE',
+            value: 'FORMATION_INITIALE_APPRENTISSAGE',
+          },
+          {
+            label: 'FORMATION_INITIALE_HORS_APPRENTISSAGE',
+            value: 'FORMATION_INITIALE_HORS_APPRENTISSAGE',
+          },
+          { label: 'VAE', value: 'VAE' },
+        ],
+      },
+    }),
     certificationRegistrationDate: Property.DateTime({
       displayName: 'Certification registration date',
+      required: false,
+      description: 'Use YYYY-MM-DD format.',
+    }),
+    certificationType: Property.StaticDropdown({
+      displayName: 'Certification Type',
+      required: false,
+      options: {
+        disabled: false,
+        options: [
+          {
+            label: 'University',
+            value: 'UNIVERSITAIRE',
+          },
+          {
+            label: 'Establishment',
+            value: 'ETABLISSEMENT',
+          },
+          {
+            label: 'Authorization',
+            value: 'HABILITATION',
+          },
+          {
+            label: 'RNCP',
+            value: 'RNCP',
+          },
+          { label: 'RS', value: 'RS' },
+          {
+            label: 'Acknowledgement',
+            value: 'RECONNAISSANCE',
+          },
+        ],
+      },
+    }),
+    certifiedData: Property.Checkbox({
+      displayName: 'Certified data',
+      required: false,
+    }),
+    certifierName: Property.ShortText({
+      displayName: 'Name of certifier',
+      required: false,
+    }),
+    cpf: Property.Checkbox({
+      displayName: 'CPF?',
+      required: false,
+    }),
+    cpfCode: Property.ShortText({
+      displayName: 'CPF Code',
+      required: false,
+    }),
+    createdAt: Property.DateTime({
+      displayName: 'Date Added',
       required: false,
       description: 'Use YYYY-MM-DD format.',
     }),
@@ -825,8 +1006,37 @@ export const digiformaProps = {
         ],
       },
     }),
+    enrollingLevel: Property.Number({
+      displayName: 'Enrolling Level',
+      required: false,
+    }),
+    enrollingLevelEnforced: Property.Checkbox({
+      displayName: 'Mandatory entry level?',
+      required: false,
+    }),
+    entryExitModality: Property.StaticDropdown({
+      displayName: 'Entry Exit Modality',
+      required: false,
+      options: {
+        disabled: false,
+        options: [
+          {
+            label: 'On Fixed Dates',
+            value: 0,
+          },
+          {
+            label: 'Permanent (without fixed dates)',
+            value: 1,
+          },
+        ],
+      },
+    }),
     goals: Property.Array({
       displayName: 'Educational Objectives',
+      required: false,
+    }),
+    graduatedLevel: Property.Number({
+      displayName: 'Output level',
       required: false,
     }),
     graduationTarget: Property.ShortText({
@@ -842,21 +1052,107 @@ export const digiformaProps = {
       description: 'Validity period (in years) of certificate',
       required: false,
     }),
+    handicappedAccessibility: Property.ShortText({
+      displayName: 'Handicapped Accessibility',
+      required: false,
+    }),
+    hoursCenter: Property.Number({
+      displayName: 'Training hours completed in the center',
+      required: false,
+    }),
+    hoursCompany: Property.Number({
+      displayName: 'Hours of training completed in-company',
+      required: false,
+    }),
+    language: Property.ShortText({
+      displayName: 'Language',
+      required: false,
+    }),
+    marketplaceCategoryId: digiformaCommon.marketplaceCategoryId(false),
+    marketplaceTargetLevel: Property.StaticDropdown({
+      displayName: 'Marketplace Target Level',
+      required: false,
+      options: {
+        disabled: false,
+        options: [
+          {
+            label: 'Advanced',
+            value: 'ADVANCED',
+          },
+          {
+            label: 'Any Level',
+            value: 'ANY_LEVEL',
+          },
+          {
+            label: 'Beginner',
+            value: 'BEGINNER',
+          },
+          {
+            label: 'Middle',
+            value: 'MIDDLE',
+          },
+        ],
+      },
+    }),
     mentoring: Property.ShortText({
       displayName: 'Description of the teaching staff',
+      required: false,
+    }),
+    overallGoal: Property.ShortText({
+      displayName: 'General objective of the training (EDOF)',
+      required: false,
+    }),
+    pedagogicalResources: Property.Array({
+      displayName: 'Pedagogical Resources',
       required: false,
     }),
     prerequisites: Property.Array({
       displayName: 'Learners Requirements',
       required: false,
     }),
+    rncpCode: Property.ShortText({
+      displayName: 'RNCP code',
+      required: false,
+    }),
+    rsCode: Property.ShortText({
+      displayName: 'RS code',
+      required: false,
+    }),
+    rythm: Property.Number({
+      displayName: 'Pace of training',
+      required: false,
+    }),
     satisfactionDescription: Property.ShortText({
       displayName: 'Perfomance Indicators',
       required: false,
     }),
+    sellOnMarketplace: Property.Checkbox({
+      displayName: 'Sell on Marketplace ?',
+      required: false,
+    }),
+    showInstructors: Property.Checkbox({
+      displayName: 'Show speakers in the catalog?',
+      required: false,
+    }),
+    skillBlock: Property.Checkbox({
+      displayName: 'Skill block?',
+      required: false,
+    }),
     specialty: digiformaCommon.programSpecialtyId(false),
+    tags: Property.Array({
+      displayName: 'Tags',
+      required: false,
+    }),
+    tailored: Property.Checkbox({
+      displayName: 'available on quote(option on online catalog) ?',
+      required: false,
+    }),
     targets: Property.Array({
       displayName: 'Target audience for this course',
+      required: false,
+    }),
+    trainingModality: Property.Number({
+      displayName: 'Type of training course',
       required: false,
     }),
     trainingPedagogicalModality: Property.StaticDropdown({
@@ -880,6 +1176,33 @@ export const digiformaProps = {
         ],
       },
     }),
+    trainingType: Property.StaticDropdown({
+      displayName: 'Training Type',
+      required: false,
+      options: {
+        disabled: false,
+        options: [
+          {
+            label: 'APPRENTISSAGE',
+            value: 'APPRENTISSAGE',
+          },
+          { label: 'EXPERIENCE', value: 'EXPERIENCE' },
+          { label: 'COMPETENCE', value: 'COMPETENCE' },
+        ],
+      },
+    }),
+    transmitterCertificationId: Property.ShortText({
+      displayName: 'Issuer ID',
+      required: false,
+    }),
+    youtubeId: Property.ShortText({
+      displayName: 'youtube video code',
+      required: false,
+    }),
+    steps: Property.Array({
+      displayName: 'COURSE CONTENT (LEARNING PROGRESSION)',
+      required: false,
+    }),
   },
   contact: {
     firstname: Property.ShortText({
@@ -901,6 +1224,128 @@ export const digiformaProps = {
     title: Property.ShortText({
       displayName: 'Title',
       required: false,
+    }),
+  },
+  subsession: {
+    attendanceFromModules: Property.Checkbox({
+      displayName: 'Attendance calculated from elearning connections?',
+      required: false,
+    }),
+    averageDurationPerDate: Property.Number({
+      displayName: 'Duration per Date',
+      required: false,
+    }),
+    color: Property.ShortText({
+      displayName: 'Module Color',
+      required: false,
+    }),
+    datesAreInterval: Property.Checkbox({
+      displayName: 'Dates in interval mode?',
+      required: false,
+    }),
+    durationDays: Property.Number({
+      displayName: 'Duration in days',
+      required: false,
+    }),
+    durationHours: Property.Number({
+      displayName: 'Duration in hours',
+      required: false,
+    }),
+    modality: Property.ShortText({
+      displayName: 'Modality',
+      required: false,
+    }),
+    costs: Property.Array({
+      displayName: 'Costs',
+      required: false,
+      properties: {
+        cost: Property.Number({
+          displayName: 'Cost',
+          required: false,
+        }),
+        costIndependant: Property.Checkbox({
+          displayName: 'Independent price ?',
+          required: false,
+        }),
+        costIndividual: Property.Checkbox({
+          displayName: 'Special price ?',
+          required: false,
+        }),
+        description: Property.LongText({
+          displayName: 'Description',
+          required: false,
+        }),
+        monthly: Property.Checkbox({
+          displayName: 'Monthly ?',
+          required: false,
+        }),
+        type: Property.StaticDropdown({
+          displayName: 'Type',
+          required: false,
+          options: {
+            disabled: false,
+            options: [
+              {
+                label: 'Training & Educational Costs',
+                value: 'training',
+              },
+              {
+                label: 'Additional Costs',
+                value: 'other_expenses',
+              },
+              {
+                label: 'Educational Tools',
+                value: 'pedagogical_products',
+              },
+              {
+                label: 'Outside of Training',
+                value: 'non_training',
+              },
+            ],
+          },
+        }),
+        costMode: Property.StaticDropdown({
+          displayName: 'Cost Mode',
+          required: false,
+          options: {
+            disabled: false,
+            options: [
+              {
+                label: 'By Client and Hour',
+                value: 'per_customer_hour',
+              },
+              {
+                label: 'By Leaner',
+                value: 'per_trainee',
+              },
+              {
+                label: 'By Learner and Hour',
+                value: 'per_hour',
+              },
+              {
+                label: 'Per Learner per Day',
+                value: 'per_day',
+              },
+              {
+                label: 'By Client',
+                value: 'per_customer',
+              },
+              {
+                label: 'Per Client per Day',
+                value: 'per_customer_day',
+              },
+              {
+                label: 'By Client and Date',
+                value: 'per_customer_day_indivisible',
+              },
+            ],
+          },
+        }),
+        vat: Property.Number({
+          displayName: 'VAT',
+          required: false,
+        }),
+      },
     }),
   },
 };

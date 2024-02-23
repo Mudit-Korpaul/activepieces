@@ -36,6 +36,7 @@ import { listTraineesAction } from './lib/actions/trainee/list-trainees';
 import { updateTraineeAction } from './lib/actions/trainee/update-trainee';
 import { addSlotsInTrainingSessionAction } from './lib/actions/training-session/add-slots-in-training-session';
 import { addTraineeInTrainingSession } from './lib/actions/training-session/add-trainee-in-training-session';
+import { createSubsessionAction } from './lib/actions/training-session/create-subsession';
 import { createTrainingSessionAction } from './lib/actions/training-session/create-training-session';
 import { listTraineesInTrainingSessionAction } from './lib/actions/training-session/list-trainee-in-training-session';
 import { listTrainingSessionsAction } from './lib/actions/training-session/list-training-sessions';
@@ -103,6 +104,7 @@ export const digiforma = createPiece({
     updateSlotInTrainingSessionAction,
     addCustomerFundingAction,
     updateCustomerFundingAction,
+    createSubsessionAction,
   ],
   triggers: [],
 });

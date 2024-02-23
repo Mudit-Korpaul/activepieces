@@ -1071,4 +1071,30 @@ export const digifromaGraphQLMutations = {
             }
         }
     }`,
+  createTrainingSubSession: `
+    mutation createSubsession($session_id:ID!,$subsession_input:SubsessionInput!){
+        createSubsession(subsessionInput:$subsession_input,trainingSessionId:$session_id)
+        {
+            id
+            name
+            modality
+            attendanceFromModules
+            averageDurationPerDate
+            datesAreInterval
+            durationDays
+            durationHours
+            color
+            costs{
+                id
+                type
+                cost
+                costMode
+                costIndependant
+                costIndividual
+                vat
+                description
+                monthly
+            }
+        }
+    }`,
 };

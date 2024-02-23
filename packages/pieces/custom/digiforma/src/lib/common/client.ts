@@ -306,4 +306,20 @@ export class DigiformaClient {
   async listmanagers() {
     return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listManagers);
   }
+  async listMarketplaceCategories() {
+    return await this.makeRequest(
+      HttpMethod.POST,
+      digifromaGraphQLQueries.listMarketplaceCategories
+    );
+  }
+  async listRooms() {
+    return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listRooms);
+  }
+  async createSubsession(id: string, request: subsessionInput) {
+    return await this.makeRequest(
+      HttpMethod.POST,
+      digifromaGraphQLMutations.createTrainingSubSession,
+      { session_id: id, subsession_input: request }
+    );
+  }
 }

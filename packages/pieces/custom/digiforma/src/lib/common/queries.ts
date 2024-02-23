@@ -612,4 +612,18 @@ export const digifromaGraphQLQueries = {
             type
         }
     }`,
+  listMarketplaceCategories: `
+  query listMarketplaceCategories{
+        marketplaceCategories{
+            id
+            name
+        }
+    }`,
+  listRooms: `
+    query{
+        rooms{
+            id
+            name
+        }
+    }`,
 };
