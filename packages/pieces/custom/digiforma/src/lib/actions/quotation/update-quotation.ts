@@ -32,7 +32,7 @@ export const updateQuotationAction = createAction({
         };
       });
 
-    let invoiceInput: CreateInvoiceInput = {
+    const invoiceInput: CreateInvoiceInput = {
       date,
     };
 

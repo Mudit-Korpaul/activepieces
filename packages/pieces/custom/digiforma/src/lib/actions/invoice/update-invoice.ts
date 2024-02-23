@@ -14,7 +14,8 @@ export const updateInvoiceAction = createAction({
     ...digiformaProps.invoice,
   },
   async run(context) {
-    const { accountingAnalytics, id, freeText, number, prefix } = context.propsValue;
+    const { accountingAnalytics, id, freeText, number, prefix } =
+      context.propsValue;
     const items = context.propsValue.items as InvoiceItemInput[];
     const updatedItems = items
       .filter((item) => Object.keys(item).length !== 0)
@@ -29,7 +30,7 @@ export const updateInvoiceAction = createAction({
         };
       });
 
-    let invoiceInput: CreateInvoiceInput = {
+    const invoiceInput: CreateInvoiceInput = {
       accountingAnalytics,
       freeText,
       number,
