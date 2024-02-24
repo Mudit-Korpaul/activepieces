@@ -850,7 +850,7 @@ export const digiformaProps = {
     min: Property.Number({
       displayName: 'Min Class size',
       required: false,
-      defaultValue: 0,
+      defaultValue: 1,
     }),
     assessments: Property.Array({
       displayName: 'Assessments',
