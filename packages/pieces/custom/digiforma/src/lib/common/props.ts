@@ -60,7 +60,8 @@ export const digiformaProps = {
       required: false,
     }),
     publicOrganization: Property.Checkbox({
-      displayName: 'State or local authority or public administrative establishment?',
+      displayName:
+        'State or local authority or public administrative establishment?',
       required: false,
       defaultValue: false,
     }),
@@ -546,12 +547,14 @@ export const digiformaProps = {
     }),
     place: Property.ShortText({
       displayName: 'Place',
-      description: 'If no room associated with the session, address of the training location.',
+      description:
+        'If no room associated with the session, address of the training location.',
       required: false,
     }),
     placeName: Property.ShortText({
       displayName: 'Place Name',
-      description: 'If no room associated with the session, name of the training location',
+      description:
+        'If no room associated with the session, name of the training location',
       required: false,
     }),
     qualityAnalysis: Property.LongText({
@@ -1263,11 +1266,11 @@ export const digiformaProps = {
           displayName: 'Cost',
           required: false,
         }),
-        costIndependant: Property.Checkbox({
-          displayName: 'Independent price ?',
+        costIndependant: Property.Number({
+          displayName: 'Independent price',
           required: false,
         }),
-        costIndividual: Property.Checkbox({
+        costIndividual: Property.Number({
           displayName: 'Special price ?',
           required: false,
         }),

@@ -39,8 +39,8 @@ export const createSubsessionAction = createAction({
           type: cost.type,
           costMode: cost.costMode,
           monthly: cost.monthly,
-          costIndependant: cost.costIndependant,
-          costIndividual: cost.costIndividual,
+          costIndependant: Number(cost.costIndependant) ?? 0,
+          costIndividual: Number(cost.costIndividual) ?? 0,
           cost: Number(cost.cost) ?? 0,
           vat: Number(cost.vat) ?? 0,
         };

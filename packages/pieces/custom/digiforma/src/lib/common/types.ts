@@ -350,8 +350,8 @@ export type subsessionInput = {
 
 export type TrainingSessionCostInput = {
   cost?: number;
-  costIndependant?: boolean;
-  costIndividual?: boolean;
+  costIndependant?: number;
+  costIndividual?: number;
   description?: string;
   monthly?: boolean;
   costMode?: string;
