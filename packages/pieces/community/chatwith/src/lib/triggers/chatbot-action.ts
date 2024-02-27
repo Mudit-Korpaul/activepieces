@@ -32,11 +32,9 @@ export const chatbotAction = createTrigger({
         // empty
     },
     async run(context) {
-        console.log(context.webhookUrl);
         return [context.payload];
       },
     async test(context) {
-        console.log(context.webhookUrl);
        return [context.payload];
     },
 })

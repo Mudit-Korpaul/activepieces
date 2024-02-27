@@ -47,7 +47,6 @@ export const askChatbot = createAction({
         stream: stream
       },
     });
-    console.log(response);
     return response.body;
   },
 });
