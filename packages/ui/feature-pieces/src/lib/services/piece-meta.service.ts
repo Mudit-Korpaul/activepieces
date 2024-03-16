@@ -38,6 +38,7 @@ import {
 
 type TriggersMetadata = Record<string, TriggerBase>;
 
+//TODO remove all hardcoded pieces names and mentions
 export const CORE_PIECES_ACTIONS_NAMES = [
   '@activepieces/piece-store',
   '@activepieces/piece-data-mapper',
@@ -52,6 +53,10 @@ export const CORE_PIECES_ACTIONS_NAMES = [
   '@activepieces/piece-date-helper',
   '@activepieces/piece-file-helper',
   '@activepieces/piece-math-helper',
+  '@activepieces/piece-activity',
+  '@activepieces/piece-image-helper',
+  '@activepieces/piece-crypto',
+
 ];
 export const corePieceIconUrl = (pieceName: string) =>
   `assets/img/custom/piece/${pieceName.replace(
@@ -95,12 +100,6 @@ export class PieceMetadataService {
 
   public triggerItemsDetails: FlowItemDetails[] = [
     {
-      type: TriggerType.WEBHOOK,
-      name: 'Webhook',
-      description: 'Trigger flow by calling a unique web url',
-      logoUrl: '/assets/img/custom/piece/webhook.svg',
-    },
-    {
       type: TriggerType.EMPTY,
       name: 'Trigger',
       description: 'Choose a trigger',
@@ -135,16 +134,17 @@ export class PieceMetadataService {
     edition,
   }: {
     pieceName: string;
-    pieceVersion: string;
+    pieceVersion?: string;
     edition: ApEdition;
   }): Observable<PieceMetadataModel> {
+      const params= {
+      ...spreadIfDefined('version',pieceVersion),
+      edition,
+    };
     return this.http.get<PieceMetadataModel>(
       `${environment.apiUrl}/pieces/${encodeURIComponent(pieceName)}`,
       {
-        params: {
-          version: pieceVersion,
-          edition,
-        },
+        params
       }
     );
   }
@@ -212,9 +212,10 @@ export class PieceMetadataService {
 
   getPieceMetadata(
     pieceName: string,
-    pieceVersion: string
+    pieceVersion?: string
   ): Observable<PieceMetadataModel> {
-    const cacheKey = this.getCacheKey(pieceName, pieceVersion);
+    
+    const cacheKey = this.getCacheKey(pieceName, pieceVersion || 'latest');
 
     if (this.piecesCache.has(cacheKey)) {
       return this.piecesCache.get(cacheKey)!;
@@ -265,11 +266,6 @@ export class PieceMetadataService {
         return {
           url: 'assets/img/custom/piece/loop_mention.png',
           key: 'loop',
-        };
-      case TriggerType.WEBHOOK:
-        return {
-          url: 'assets/img/custom/piece/webhook_mention.png',
-          key: 'webhook',
         };
     }
 

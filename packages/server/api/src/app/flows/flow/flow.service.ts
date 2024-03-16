@@ -99,7 +99,7 @@ export const flowService = {
         }
 
         const paginationResult = await paginator.paginate(
-            flowRepo().createQueryBuilder('flow').where(queryWhere).addOrderBy('flow.status', 'DESC'),
+            flowRepo().createQueryBuilder('flow').where(queryWhere),
         )
 
         const populatedFlowPromises = paginationResult.data.map(async (flow) => {
@@ -185,7 +185,7 @@ export const flowService = {
         const flowLock = lock
             ? await acquireLock({
                 key: id,
-                timeout: 10000,
+                timeout: 30000,
             })
             : null
 

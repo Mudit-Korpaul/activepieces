@@ -103,7 +103,7 @@ export class FlowsEffects {
       concatLatestFrom(() =>
         this.store.select(BuilderSelectors.selectCurrentFlow)
       ),
-      switchMap(([action, flow]) => {
+      switchMap(([_, flow]) => {
         const invalidSteps = flowHelper
           .getAllSteps(flow.version.trigger)
           .filter((s) => !s.valid);
@@ -114,11 +114,7 @@ export class FlowsEffects {
             })
           );
         }
-        return of(
-          canvasActions.selectStepByName({
-            stepName: flow.version.trigger.name,
-          })
-        );
+        return EMPTY;
       })
     );
   });
@@ -206,7 +202,6 @@ export class FlowsEffects {
             case ActionType.CODE:
             case ActionType.LOOP_ON_ITEMS:
             case TriggerType.PIECE:
-            case TriggerType.WEBHOOK:
             case ActionType.PIECE: {
               const actionsToDispatch: Array<any> = [
                 canvasActions.setRightSidebar({

@@ -1,32 +1,52 @@
-import { PieceCategory, SuggestionType } from '@activepieces/shared'
+import { PieceCategory, PlatformId, SuggestionType, isNil } from '@activepieces/shared'
 import { PieceMetadataSchema } from '../../piece-metadata-entity'
 import Fuse from 'fuse.js'
 import { ActionBase, TriggerBase } from '@activepieces/pieces-framework'
+import { platformService } from '../../../platform/platform.service'
 
 
 const pieceFilterKeys = [{
     name: 'displayName',
-    weight: 2,
+    weight: 3,
 }, {
     name: 'description',
     weight: 1,
 }]
 
 const suggestionLimit = 3
-export const filterPiecesBasedUser = ({
+export const filterPiecesBasedUser = async ({
     searchQuery,
     pieces,
     categories,
     suggestionType,
+    platformId,
 }: {
     categories: PieceCategory[] | undefined
     searchQuery: string | undefined
     pieces: PieceMetadataSchema[]
     suggestionType?: SuggestionType
-}): PieceMetadataSchema[] => {
-    return filterBasedOnCategories({
+    platformId?: PlatformId
+}): Promise<PieceMetadataSchema[]> => {
+
+    return filterPiecesBasedOnFeatures(platformId, filterBasedOnCategories({
         categories,
         pieces: filterBasedOnSearchQuery({ searchQuery, pieces, suggestionType }),
+    }))
+}
+
+async function filterPiecesBasedOnFeatures(
+    platformId: PlatformId | undefined,
+    pieces: PieceMetadataSchema[],
+): Promise<PieceMetadataSchema[]> {
+    if (isNil(platformId)) {
+        return pieces
+    }
+    const platform = await platformService.getOneOrThrow(platformId)
+    return pieces.filter((piece) => {
+        if (piece.name === '@activepieces/piece-activity' && !platform.showActivityLog) {
+            return false
+        }
+        return true
     })
 }
 

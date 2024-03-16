@@ -1,13 +1,13 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
 import { RateLimitOptions } from '@fastify/rate-limit'
 import { authenticationService } from './authentication-service'
-import { resolvePlatformIdForRequest } from '../ee/platform/lib/platform-utils'
+import { resolvePlatformIdForRequest } from '../platform/platform-utils'
 import { getEdition } from '../helper/secret-helper'
 import {
     ApEdition,
     SignUpRequest,
     SignInRequest,
-    ALL_PRINICPAL_TYPES,
+    ALL_PRINCIPAL_TYPES,
 } from '@activepieces/shared'
 import { system, SystemProp } from 'server-shared'
 import { Provider } from './authentication-service/hooks/authentication-service-hooks'
@@ -65,7 +65,7 @@ const rateLimitOptions: RateLimitOptions = {
 
 const SignUpRequestOptions = {
     config: {
-        allowedPrincipals: ALL_PRINICPAL_TYPES,
+        allowedPrincipals: ALL_PRINCIPAL_TYPES,
         rateLimit: rateLimitOptions,
     },
     schema: {
@@ -75,7 +75,7 @@ const SignUpRequestOptions = {
 
 const SignInRequestOptions = {
     config: {
-        allowedPrincipals: ALL_PRINICPAL_TYPES,
+        allowedPrincipals: ALL_PRINCIPAL_TYPES,
         rateLimit: rateLimitOptions,
     },
     schema: {

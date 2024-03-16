@@ -56,6 +56,12 @@
                 "enum": [
                   "VIEWER"
                 ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "EXTERNAL_CUSTOMER"
+                ]
               }
             ]
           },
@@ -120,28 +126,27 @@
               }
             ]
           },
-          "type": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": [
-                  "PLATFORM_MANAGED"
-                ]
-              },
-              {
-                "type": "string",
-                "enum": [
-                  "STANDALONE"
-                ]
-              }
-            ]
-          },
           "platformId": {
             "pattern": "^[0-9a-zA-Z]{21}$",
             "type": "string"
           },
           "externalId": {
             "type": "string"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "tasks": {
+                "type": "number"
+              },
+              "teamMembers": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "tasks",
+              "teamMembers"
+            ]
           },
           "plan": {
             "type": "object",
@@ -156,6 +161,9 @@
                 "type": "string"
               },
               "projectId": {
+                "type": "string"
+              },
+              "stripeCustomerId": {
                 "type": "string"
               },
               "stripeSubscriptionId": {
@@ -190,55 +198,13 @@
               "created",
               "updated",
               "projectId",
+              "stripeCustomerId",
               "subscriptionStartDatetime",
               "flowPlanName",
               "minimumPollingInterval",
               "connections",
               "teamMembers",
               "tasks"
-            ]
-          },
-          "usage": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "created": {
-                "type": "string"
-              },
-              "updated": {
-                "type": "string"
-              },
-              "projectId": {
-                "type": "string"
-              },
-              "consumedTasks": {
-                "type": "number"
-              },
-              "connections": {
-                "type": "number"
-              },
-              "teamMembers": {
-                "type": "number"
-              },
-              "consumedTasksToday": {
-                "type": "number"
-              },
-              "nextResetDatetime": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "created",
-              "updated",
-              "projectId",
-              "consumedTasks",
-              "connections",
-              "teamMembers",
-              "consumedTasksToday",
-              "nextResetDatetime"
             ]
           }
         },
@@ -249,9 +215,9 @@
           "ownerId",
           "displayName",
           "notifyStatus",
-          "type",
-          "plan",
-          "usage"
+          "platformId",
+          "usage",
+          "plan"
         ]
       },
       "flow": {
@@ -323,6 +289,182 @@
           "updated",
           "projectId",
           "status"
+        ]
+      },
+      "flow-run": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string"
+          },
+          "updated": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "flowId": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flowVersionId": {
+            "type": "string"
+          },
+          "flowDisplayName": {
+            "type": "string"
+          },
+          "terminationReason": {
+            "type": "string"
+          },
+          "logsFileId": {
+            "type": "string",
+            "nullable": true
+          },
+          "tasks": {
+            "type": "number"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "FAILED"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "QUOTA_EXCEEDED"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "INTERNAL_ERROR"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "PAUSED"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "RUNNING"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "STOPPED"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "SUCCEEDED"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "TIMEOUT"
+                ]
+              }
+            ]
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "finishTime": {
+            "type": "string"
+          },
+          "environment": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "PRODUCTION"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "TESTING"
+                ]
+              }
+            ]
+          },
+          "pauseMetadata": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "DELAY"
+                    ]
+                  },
+                  "resumeDateTime": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "resumeDateTime"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "WEBHOOK"
+                    ]
+                  },
+                  "requestId": {
+                    "type": "string"
+                  },
+                  "response": {}
+                },
+                "required": [
+                  "type",
+                  "requestId",
+                  "response"
+                ]
+              }
+            ]
+          },
+          "steps": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "id",
+          "created",
+          "updated",
+          "projectId",
+          "flowId",
+          "flowVersionId",
+          "flowDisplayName",
+          "status",
+          "startTime",
+          "finishTime",
+          "environment",
+          "steps"
         ]
       },
       "app-connection": {
@@ -3724,6 +3866,9 @@
           },
           "projectId": {
             "type": "string"
+          },
+          "slug": {
+            "type": "string"
           }
         },
         "required": [
@@ -3732,7 +3877,8 @@
           "updated",
           "remoteUrl",
           "branch",
-          "projectId"
+          "projectId",
+          "slug"
         ]
       }
     }
@@ -6646,6 +6792,451 @@
         }
       }
     },
+    "/v1/flow-runs/": {
+      "get": {
+        "tags": [
+          "flow-runs"
+        ],
+        "description": "List Flow Runs",
+        "parameters": [
+          {
+            "schema": {
+              "pattern": "^[0-9a-zA-Z]{21}$",
+              "type": "string"
+            },
+            "in": "query",
+            "name": "flowId",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "in": "query",
+            "name": "tags",
+            "required": false
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "FAILED"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "QUOTA_EXCEEDED"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "INTERNAL_ERROR"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "PAUSED"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "RUNNING"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "STOPPED"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "SUCCEEDED"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "TIMEOUT"
+                  ]
+                }
+              ]
+            },
+            "in": "query",
+            "name": "status",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "cursor",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "createdAfter",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "createdBefore",
+            "required": false
+          },
+          {
+            "schema": {
+              "pattern": "^[0-9a-zA-Z]{21}$",
+              "type": "string"
+            },
+            "in": "query",
+            "name": "projectId",
+            "required": false
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "created": {
+                            "type": "string"
+                          },
+                          "updated": {
+                            "type": "string"
+                          },
+                          "projectId": {
+                            "type": "string"
+                          },
+                          "flowId": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "flowVersionId": {
+                            "type": "string"
+                          },
+                          "flowDisplayName": {
+                            "type": "string"
+                          },
+                          "tasks": {
+                            "type": "number"
+                          },
+                          "status": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "FAILED"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "QUOTA_EXCEEDED"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "INTERNAL_ERROR"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "PAUSED"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "RUNNING"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "STOPPED"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "SUCCEEDED"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "TIMEOUT"
+                                ]
+                              }
+                            ]
+                          },
+                          "startTime": {
+                            "type": "string"
+                          },
+                          "finishTime": {
+                            "type": "string"
+                          },
+                          "environment": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "PRODUCTION"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "TESTING"
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "created",
+                          "updated",
+                          "projectId",
+                          "flowId",
+                          "flowVersionId",
+                          "flowDisplayName",
+                          "status",
+                          "startTime",
+                          "finishTime",
+                          "environment"
+                        ]
+                      }
+                    },
+                    "next": {
+                      "description": "Cursor to the next page",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "previous": {
+                      "description": "Cursor to the previous page",
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/flow-runs/{id}": {
+      "get": {
+        "tags": [
+          "flow-runs"
+        ],
+        "description": "Get Flow Run",
+        "parameters": [
+          {
+            "schema": {
+              "pattern": "^[0-9a-zA-Z]{21}$",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "created": {
+                      "type": "string"
+                    },
+                    "updated": {
+                      "type": "string"
+                    },
+                    "projectId": {
+                      "type": "string"
+                    },
+                    "flowId": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "flowVersionId": {
+                      "type": "string"
+                    },
+                    "flowDisplayName": {
+                      "type": "string"
+                    },
+                    "tasks": {
+                      "type": "number"
+                    },
+                    "status": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "FAILED"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "QUOTA_EXCEEDED"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "INTERNAL_ERROR"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "PAUSED"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "RUNNING"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "STOPPED"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "SUCCEEDED"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "TIMEOUT"
+                          ]
+                        }
+                      ]
+                    },
+                    "startTime": {
+                      "type": "string"
+                    },
+                    "finishTime": {
+                      "type": "string"
+                    },
+                    "environment": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "PRODUCTION"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "TESTING"
+                          ]
+                        }
+                      ]
+                    },
+                    "steps": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "created",
+                    "updated",
+                    "projectId",
+                    "flowId",
+                    "flowVersionId",
+                    "flowDisplayName",
+                    "status",
+                    "startTime",
+                    "finishTime",
+                    "environment",
+                    "steps"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/app-connections/": {
       "post": {
         "tags": [
@@ -7351,28 +7942,27 @@
                         }
                       ]
                     },
-                    "type": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "PLATFORM_MANAGED"
-                          ]
-                        },
-                        {
-                          "type": "string",
-                          "enum": [
-                            "STANDALONE"
-                          ]
-                        }
-                      ]
-                    },
                     "platformId": {
                       "pattern": "^[0-9a-zA-Z]{21}$",
                       "type": "string"
                     },
                     "externalId": {
                       "type": "string"
+                    },
+                    "usage": {
+                      "type": "object",
+                      "properties": {
+                        "tasks": {
+                          "type": "number"
+                        },
+                        "teamMembers": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "tasks",
+                        "teamMembers"
+                      ]
                     },
                     "plan": {
                       "type": "object",
@@ -7387,6 +7977,9 @@
                           "type": "string"
                         },
                         "projectId": {
+                          "type": "string"
+                        },
+                        "stripeCustomerId": {
                           "type": "string"
                         },
                         "stripeSubscriptionId": {
@@ -7421,55 +8014,13 @@
                         "created",
                         "updated",
                         "projectId",
+                        "stripeCustomerId",
                         "subscriptionStartDatetime",
                         "flowPlanName",
                         "minimumPollingInterval",
                         "connections",
                         "teamMembers",
                         "tasks"
-                      ]
-                    },
-                    "usage": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "created": {
-                          "type": "string"
-                        },
-                        "updated": {
-                          "type": "string"
-                        },
-                        "projectId": {
-                          "type": "string"
-                        },
-                        "consumedTasks": {
-                          "type": "number"
-                        },
-                        "connections": {
-                          "type": "number"
-                        },
-                        "teamMembers": {
-                          "type": "number"
-                        },
-                        "consumedTasksToday": {
-                          "type": "number"
-                        },
-                        "nextResetDatetime": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "created",
-                        "updated",
-                        "projectId",
-                        "consumedTasks",
-                        "connections",
-                        "teamMembers",
-                        "consumedTasksToday",
-                        "nextResetDatetime"
                       ]
                     }
                   },
@@ -7480,9 +8031,9 @@
                     "ownerId",
                     "displayName",
                     "notifyStatus",
-                    "type",
-                    "plan",
-                    "usage"
+                    "platformId",
+                    "usage",
+                    "plan"
                   ]
                 }
               }
@@ -7553,28 +8104,27 @@
                               }
                             ]
                           },
-                          "type": {
-                            "anyOf": [
-                              {
-                                "type": "string",
-                                "enum": [
-                                  "PLATFORM_MANAGED"
-                                ]
-                              },
-                              {
-                                "type": "string",
-                                "enum": [
-                                  "STANDALONE"
-                                ]
-                              }
-                            ]
-                          },
                           "platformId": {
                             "pattern": "^[0-9a-zA-Z]{21}$",
                             "type": "string"
                           },
                           "externalId": {
                             "type": "string"
+                          },
+                          "usage": {
+                            "type": "object",
+                            "properties": {
+                              "tasks": {
+                                "type": "number"
+                              },
+                              "teamMembers": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "tasks",
+                              "teamMembers"
+                            ]
                           },
                           "plan": {
                             "type": "object",
@@ -7589,6 +8139,9 @@
                                 "type": "string"
                               },
                               "projectId": {
+                                "type": "string"
+                              },
+                              "stripeCustomerId": {
                                 "type": "string"
                               },
                               "stripeSubscriptionId": {
@@ -7623,55 +8176,13 @@
                               "created",
                               "updated",
                               "projectId",
+                              "stripeCustomerId",
                               "subscriptionStartDatetime",
                               "flowPlanName",
                               "minimumPollingInterval",
                               "connections",
                               "teamMembers",
                               "tasks"
-                            ]
-                          },
-                          "usage": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string"
-                              },
-                              "created": {
-                                "type": "string"
-                              },
-                              "updated": {
-                                "type": "string"
-                              },
-                              "projectId": {
-                                "type": "string"
-                              },
-                              "consumedTasks": {
-                                "type": "number"
-                              },
-                              "connections": {
-                                "type": "number"
-                              },
-                              "teamMembers": {
-                                "type": "number"
-                              },
-                              "consumedTasksToday": {
-                                "type": "number"
-                              },
-                              "nextResetDatetime": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "created",
-                              "updated",
-                              "projectId",
-                              "consumedTasks",
-                              "connections",
-                              "teamMembers",
-                              "consumedTasksToday",
-                              "nextResetDatetime"
                             ]
                           }
                         },
@@ -7682,9 +8193,9 @@
                           "ownerId",
                           "displayName",
                           "notifyStatus",
-                          "type",
-                          "plan",
-                          "usage"
+                          "platformId",
+                          "usage",
+                          "plan"
                         ]
                       }
                     },
@@ -7750,7 +8261,6 @@
                       }
                     },
                     "required": [
-                      "teamMembers",
                       "tasks"
                     ]
                   }
@@ -7818,28 +8328,27 @@
                         }
                       ]
                     },
-                    "type": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "PLATFORM_MANAGED"
-                          ]
-                        },
-                        {
-                          "type": "string",
-                          "enum": [
-                            "STANDALONE"
-                          ]
-                        }
-                      ]
-                    },
                     "platformId": {
                       "pattern": "^[0-9a-zA-Z]{21}$",
                       "type": "string"
                     },
                     "externalId": {
                       "type": "string"
+                    },
+                    "usage": {
+                      "type": "object",
+                      "properties": {
+                        "tasks": {
+                          "type": "number"
+                        },
+                        "teamMembers": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "tasks",
+                        "teamMembers"
+                      ]
                     },
                     "plan": {
                       "type": "object",
@@ -7854,6 +8363,9 @@
                           "type": "string"
                         },
                         "projectId": {
+                          "type": "string"
+                        },
+                        "stripeCustomerId": {
                           "type": "string"
                         },
                         "stripeSubscriptionId": {
@@ -7888,55 +8400,13 @@
                         "created",
                         "updated",
                         "projectId",
+                        "stripeCustomerId",
                         "subscriptionStartDatetime",
                         "flowPlanName",
                         "minimumPollingInterval",
                         "connections",
                         "teamMembers",
                         "tasks"
-                      ]
-                    },
-                    "usage": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "created": {
-                          "type": "string"
-                        },
-                        "updated": {
-                          "type": "string"
-                        },
-                        "projectId": {
-                          "type": "string"
-                        },
-                        "consumedTasks": {
-                          "type": "number"
-                        },
-                        "connections": {
-                          "type": "number"
-                        },
-                        "teamMembers": {
-                          "type": "number"
-                        },
-                        "consumedTasksToday": {
-                          "type": "number"
-                        },
-                        "nextResetDatetime": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "created",
-                        "updated",
-                        "projectId",
-                        "consumedTasks",
-                        "connections",
-                        "teamMembers",
-                        "consumedTasksToday",
-                        "nextResetDatetime"
                       ]
                     }
                   },
@@ -7947,9 +8417,9 @@
                     "ownerId",
                     "displayName",
                     "notifyStatus",
-                    "type",
-                    "plan",
-                    "usage"
+                    "platformId",
+                    "usage",
+                    "plan"
                   ]
                 }
               }
@@ -8035,6 +8505,12 @@
                         "enum": [
                           "VIEWER"
                         ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "EXTERNAL_CUSTOMER"
+                        ]
                       }
                     ]
                   },
@@ -8118,6 +8594,12 @@
                           "type": "string",
                           "enum": [
                             "VIEWER"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "EXTERNAL_CUSTOMER"
                           ]
                         }
                       ]
@@ -8303,30 +8785,46 @@
         }
       }
     },
-    "/v1/git-repos/{id}/pull": {
+    "/v1/git-repos/pull": {
       "post": {
         "tags": [
           "git-repo"
         ],
         "description": "Pull all changes from the git repository and overwrite any conflicting changes in the project.",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "path",
-            "name": "id",
-            "required": true
-          }
-        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "projectId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "projectId"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
         "security": [
           {
             "apiKey": []
           }
         ],
         "responses": {
-          "204": {
-            "description": "Default Response"
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
           }
         }
       }

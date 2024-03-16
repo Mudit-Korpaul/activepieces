@@ -5,14 +5,14 @@ import {
 import { federatedAuthnService } from './federated-authn-service'
 import {
     ApplicationEventName,
-    ClaimTokenRequest,
-    ThirdPartyAuthnProviderEnum,
 } from '@activepieces/ee-shared'
 import {
-    ALL_PRINICPAL_TYPES,
+    ClaimTokenRequest,
+    ThirdPartyAuthnProviderEnum,
+    ALL_PRINCIPAL_TYPES,
     assertNotNullOrUndefined,
 } from '@activepieces/shared'
-import { resolvePlatformIdForRequest } from '../../platform/lib/platform-utils'
+import { resolvePlatformIdForRequest } from '../../../platform/platform-utils'
 import { eventsHooks } from '../../../helper/application-events'
 
 export const federatedAuthnController: FastifyPluginAsyncTypebox = async (
@@ -51,7 +51,7 @@ export const federatedAuthnController: FastifyPluginAsyncTypebox = async (
 
 const LoginRequestSchema = {
     config: {
-        allowedPrincipals: ALL_PRINICPAL_TYPES,
+        allowedPrincipals: ALL_PRINCIPAL_TYPES,
     },
     schema: {
         querystring: Type.Object({
@@ -62,7 +62,7 @@ const LoginRequestSchema = {
 
 const ClaimTokenRequestSchema = {
     config: {
-        allowedPrincipals: ALL_PRINICPAL_TYPES,
+        allowedPrincipals: ALL_PRINCIPAL_TYPES,
     },
     schema: {
         body: ClaimTokenRequest,

@@ -4,6 +4,7 @@ import { cwd } from 'node:process'
 import { Piece, PieceMetadata } from '@activepieces/pieces-framework'
 import {
     ActivepiecesError,
+    ApEdition,
     EXACT_VERSION_PATTERN,
     ErrorCode,
     PackageType,
@@ -20,8 +21,9 @@ import {
 } from '../piece-metadata-entity'
 import { pieceMetadataServiceHooks } from './hooks'
 import { nanoid } from 'nanoid'
-import { exceptionHandler } from 'server-shared'
+import { exceptionHandler, logger } from 'server-shared'
 import { toPieceMetadataModelSummary } from '.'
+import { getEdition } from '../../helper/secret-helper'
 
 const loadPiecesMetadata = async (): Promise<PieceMetadata[]> => {
     const pieces = await findAllPieces()
@@ -30,10 +32,22 @@ const loadPiecesMetadata = async (): Promise<PieceMetadata[]> => {
     )
 }
 async function findAllPieces(): Promise<PieceMetadata[]> {
-    const piecesPath = resolve(cwd(), 'dist', 'packages', 'pieces')
-    const paths = await traverseFolder(piecesPath)
-    const pieces = await Promise.all(paths.map((p) => loadPieceFromFolder(p)))
-    return pieces.filter((p): p is PieceMetadata => p !== null)
+    const pieces = await loadPiecesFromFolder(resolve(cwd(), 'dist', 'packages', 'pieces'))
+    const enterprisePieces = getEdition() === ApEdition.ENTERPRISE ? await loadPiecesFromFolder(resolve(cwd(), 'dist', 'packages', 'ee', 'pieces')) : []
+    return [...pieces, ...enterprisePieces]
+}
+
+async function loadPiecesFromFolder(folderPath: string): Promise<PieceMetadata[]> {
+    try {
+        const paths = await traverseFolder(folderPath)
+        const pieces = await Promise.all(paths.map((p) => loadPieceFromFolder(p)))
+        return pieces.filter((p): p is PieceMetadata => p !== null)
+    }
+    catch (e) {
+        const err = e as Error
+        logger.warn({ name: 'FilePieceMetadataService#loadPiecesFromFolder', message: err.message, stack: err.stack })
+        return []
+    }
 }
 
 async function traverseFolder(folderPath: string): Promise<string[]> {
@@ -45,10 +59,10 @@ async function traverseFolder(folderPath: string): Promise<string[]> {
         const fileStats = await stat(filePath)
         if (
             fileStats.isDirectory() &&
-      file !== 'node_modules' &&
-      file !== 'dist' &&
-      file !== 'framework' &&
-      file !== 'common'
+            file !== 'node_modules' &&
+            file !== 'dist' &&
+            file !== 'framework' &&
+            file !== 'common'
         ) {
             paths.push(...(await traverseFolder(filePath)))
         }
@@ -182,6 +196,7 @@ const toPieceMetadataModel = ({
         minimumSupportedRelease: pieceMetadata.minimumSupportedRelease,
         maximumSupportedRelease: pieceMetadata.maximumSupportedRelease,
         actions: pieceMetadata.actions,
+        authors: pieceMetadata.authors,
         categories: pieceMetadata.categories,
         triggers: pieceMetadata.triggers,
         directoryPath: pieceMetadata.directoryPath,

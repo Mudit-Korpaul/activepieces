@@ -3,7 +3,7 @@ import {
     Type,
 } from '@fastify/type-provider-typebox'
 import {
-    ALL_PRINICPAL_TYPES,
+    ALL_PRINCIPAL_TYPES,
     ApEdition,
     GetPieceRequestParams,
     GetPieceRequestQuery,
@@ -35,7 +35,7 @@ const basePiecesController: FastifyPluginAsyncTypebox = async (app) => {
         '/categories',
         {
             config: {
-                allowedPrincipals: ALL_PRINICPAL_TYPES,
+                allowedPrincipals: ALL_PRINCIPAL_TYPES,
             },
             schema: {
                 querystring: ListPiecesRequestQuery,
@@ -50,22 +50,23 @@ const basePiecesController: FastifyPluginAsyncTypebox = async (app) => {
         '/',
         {
             config: {
-                allowedPrincipals: ALL_PRINICPAL_TYPES,
+                allowedPrincipals: ALL_PRINCIPAL_TYPES,
             },
             schema: {
                 querystring: ListPiecesRequestQuery,
-              
+
             },
         },
         async (req): Promise<PieceMetadataModelSummary[]> => {
             const latestRelease = await flagService.getCurrentRelease()
             const release = req.query.release ?? latestRelease
             const edition = req.query.edition ?? ApEdition.COMMUNITY
+            const platformId = req.principal.type === PrincipalType.UNKNOWN ? undefined : req.principal.platform.id
             const pieceMetadataSummary = await pieceMetadataService.list({
                 release,
                 includeHidden: req.query.includeHidden ?? false,
                 projectId: req.principal.projectId,
-                platformId: req.principal.platform?.id,
+                platformId,
                 edition,
                 categories: req.query.categories,
                 searchQuery: req.query.searchQuery,
@@ -81,7 +82,7 @@ const basePiecesController: FastifyPluginAsyncTypebox = async (app) => {
         '/:scope/:name',
         {
             config: {
-                allowedPrincipals: ALL_PRINICPAL_TYPES,
+                allowedPrincipals: ALL_PRINCIPAL_TYPES,
             },
             schema: {
                 params: GetPieceRequestWithScopeParams,
@@ -109,7 +110,7 @@ const basePiecesController: FastifyPluginAsyncTypebox = async (app) => {
         '/:name',
         {
             config: {
-                allowedPrincipals: ALL_PRINICPAL_TYPES,
+                allowedPrincipals: ALL_PRINCIPAL_TYPES,
             },
             schema: {
                 params: GetPieceRequestParams,
@@ -150,6 +151,7 @@ const basePiecesController: FastifyPluginAsyncTypebox = async (app) => {
                 input,
                 flowVersionId,
                 flowId,
+                searchValue,
             } = req.body
             const { projectId } = req.principal
             const flow = await flowService.getOnePopulatedOrThrow({
@@ -169,6 +171,7 @@ const basePiecesController: FastifyPluginAsyncTypebox = async (app) => {
                 stepName,
                 input,
                 projectId,
+                searchValue,
             })
 
             return result
