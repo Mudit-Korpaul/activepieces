@@ -1,5 +1,5 @@
 export const digifromaGraphQLQueries = {
-  listComapnies: `
+	listComapnies: `
   query{
     companies{
             accountingNumber
@@ -19,7 +19,45 @@ export const digifromaGraphQLQueries = {
             website
         }
     }`,
-  listCustomers: `
+	searchCompanies: `
+    query searchCompanies($date_filters:DateFilter){
+        companies(dateFilters:$date_filters)
+        {
+            accountingNumber
+            ape
+            id
+            name
+            city
+            cityCode
+            code
+            siret
+            country
+            countryCode
+            email
+            employeesCount
+            externalId
+            opcaNumber
+            phone
+            website
+            idcc
+            insertedAt
+            isRlt
+            locale
+            nace
+            note
+            opca
+            opcaNumber
+            phone
+            publicOrganization
+            rcsCity
+            roadAddress
+            siret
+            updatedAt
+            vat
+            website
+        }
+    }`,
+	listCustomers: `
   query{
     customers{
         accountingNumber
@@ -69,7 +107,60 @@ export const digifromaGraphQLQueries = {
         }
     }
 }`,
-  listQuotations: `
+	searchCustomers: `
+        query searchCustomers($date_filters:DateFilter)
+        {
+        customers(dateFilters:$date_filters){
+            accountingNumber
+            contracted
+            contractedFundingUnknown
+            conventionSigned
+            costSalary
+            crmStatus
+            estimatedTraineeCount
+            foreignCustomer
+            id
+            jobless
+            manualBpf
+            manualBpfAmount
+            manualBpfHours
+            manualBpfHoursAmount
+            manualBpfOtherAmount
+            manualBpfPedagogicalAmount
+            manualBpfTraineesAmount
+            pipelineState
+            qualityExpectations
+            qualitySuccessConditions
+            specialPrice
+            stripeId
+            vat
+            costs{
+                id
+                type
+                cost
+                costMode
+            }
+            customerFundings{
+                id
+                amount
+                fundingAgreement
+                fundingAgency{
+                    id
+                    name
+                }
+            }
+            customerTrainees{
+                id
+            }
+            subsessions{
+                id
+                name
+            }
+            updatedAt
+            insertedAt
+        }
+        }`,
+	listQuotations: `
   query{
     quotations{
         id
@@ -102,7 +193,7 @@ export const digifromaGraphQLQueries = {
         }
     }
 }`,
-  listTrainees: `
+	listTrainees: `
   query{
     trainees{
         academyId
@@ -172,7 +263,77 @@ export const digifromaGraphQLQueries = {
     }
 
   }`,
-  listPrograms: `
+	searchTrainees: `
+    query searchTrainees($date_filters:DateFilter)
+    {
+        trainees(dateFilters:$date_filters)
+        {
+            academyId
+            accountingNumber
+            birthCity
+            birthCityCode
+            birthName
+            birthRegion
+            birthdate
+            city
+            cityCode
+            civility
+            code
+            company{
+                id
+                name
+            }
+            companyId
+            companyName
+            country
+            countryCode
+            dpcAdeli
+            dpcMainStatus
+            dpcRpps
+            draft
+            email
+            externalId
+            firstname
+            freeText
+            grades{
+                id
+                label
+                scoreResult
+            }
+            handicaped
+            hourlySalary
+            id
+            insertedAt
+            isPartialUnemployment
+            isSexualHarassmentVictim
+            isTerrorismVictim
+            lastDiploma
+            lastname
+            levelStudies
+            locale
+            logo{
+                id
+                filename
+            }
+            nationality
+            note
+            phone
+            phoneSecondary
+            position
+            profession
+            professionalCategory
+            roadAddress
+            siret
+            socialCategory
+            socialNumber
+            status
+            updatedAt
+            vat
+            vatAccountingCode
+            workContractType
+        }
+    }`,
+	listPrograms: `
   query{
     programs{
             accessDelay
@@ -275,7 +436,112 @@ export const digifromaGraphQLQueries = {
             }
     }
 }`,
-  listInstructors: `
+	searchPrograms: `
+        query seachPrograms($date_filters:DateFilter)
+        {
+        programs(DateFilters:$date_filters)
+        {
+                accessDelay
+                id
+                name
+                name
+                accessDelayUnit
+                accountingAnalytics
+                rsCode
+                rncpCode
+                economicalModel
+                
+                durationInDays
+                durationInHours
+                version
+                onSale
+                certifInfoCode
+                accountingNumber
+                accountingNumberFundingAgency
+                cpfCode
+                admissionModality
+                code
+                category{
+                    id
+                    name
+                }
+                assessments{
+                    sourceId
+                    text
+                }
+                certificateurContratId
+                certificateurId
+                certificationDetails
+                certificationIncludedInAdditionalExpenses
+                certificationModalityAccess
+                certificationModality
+                certificationRegistrationDate
+                certificationType
+                certifiedData
+                certifierName
+                code
+                cpf
+                cpfCode
+                createdAt
+                description
+                diploma
+                diplomaName
+                diplomaTitle
+                documents{
+                    id
+                    filename
+                }
+                dpc
+                durationInDays
+                economicalModel
+                enrollingLevelEnforced
+                entryExitModality
+                graduatedLevel
+                graduationModality
+                graduationTarget
+                graduationValidityYears
+                youtubeId
+                version
+                updatedAt
+                transmitterCertificationId
+                trainingType
+                trainingPedagogicalModality
+                trainingModality
+                tailored
+                subtitle
+                rythm
+                targets{
+                    sourceId
+                    text
+                }
+                steps{
+                    sourceId
+                    text
+                }
+                tags{
+                    name
+                }
+                trainingType
+                targets{
+                    text
+                }
+                youtubeId
+                pedagogicalResources{
+                    sourceId
+                    text
+                }
+                graduationTarget
+                prerequisites{
+                    sourceId
+                    text
+                }
+                goals{
+                    sourceId
+                    text
+                }
+        }
+        }`,
+	listInstructors: `
     query{
         instructors{
         academyId
@@ -323,7 +589,57 @@ export const digifromaGraphQLQueries = {
         vat
         }
     }`,
-  listFundingAgencies: `
+	searchInstructors: `
+    query searchInstructors($date_filters:DateFilter)
+        {
+        instructors(dateFilters:$date_filters)
+        {
+            academyId
+            accountingNumber
+            bio
+            birthCity
+            birthName
+            birthRegion
+            birthdate
+            city
+            cityCode
+            civility
+            code
+            company
+            contractAccepted
+            cost
+            country
+            countryCode
+            diploma
+            dpcAdeli
+            dpcRpps
+            email
+            externalId
+            firstname
+            id
+            insertedAt
+            instructorLegalNumber
+            insurance
+            lastname
+            locale
+            logo{
+                id
+                filename
+            }
+            nationality
+            note
+            phone
+            profession
+            roadAddress
+            siret
+            skills
+            socialNumber
+            status
+            updatedAt
+            vat
+        }
+    }`,
+	listFundingAgencies: `
     query{
         fundingAgencies{
             accountingNumber
@@ -350,7 +666,36 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-  listTrainingSessions: `
+	searchFundingAgencies: `
+    query searchFundingAgencies($date_filters:DateFilter)
+    {
+        fundingAgencies($DateFilters:$date_filters)
+        {
+            accountingNumber
+            city
+            cityCode
+            code
+            country
+            countryCode
+            email
+            externalId
+            id
+            insertedAt
+            locale
+            name
+            note
+            phone
+            roadAddress
+            siret
+            type
+            updatedAt
+            trainingSessions{
+                id
+                name
+            }
+        }
+    }`,
+	listTrainingSessions: `
     query{
         trainingSessions{
             id
@@ -403,7 +748,63 @@ export const digifromaGraphQLQueries = {
         }
     
     }`,
-  listTraineesInTrainingSession: `
+	searchTrainingSessions: `
+    query searchTrainingSessions($date_filters:DateFilter)
+    {
+        trainingSessions(dateFilters:$date_filters)
+        {
+            id
+            name
+            academy{
+                id
+                contactEmail
+            }
+            address
+            addressName
+            attendanceId
+            baseDocuments{
+                id
+                filename
+            }
+            cityCode
+            code
+            codeFundae
+            comments{
+                id
+                author
+                text
+            }
+            contracted
+            costs{
+                id
+                cost
+                costMode
+                description
+                type
+                vat
+            }
+            customName
+            customers{
+                id
+            }
+            dates{
+                date
+                startTime
+                endTime
+                slot
+            }
+            datesGoogleUrl
+            datesWebcalUrl
+            diploma
+            diplomaTitle
+            dpc
+            endDate
+            updatedAt
+            insertedAt
+        }
+    }
+    `,
+	listTraineesInTrainingSession: `
   query listTraineesInTrainingSession($session_id:ID!)
   {
       trainingSession(id:$session_id)
@@ -429,7 +830,7 @@ export const digifromaGraphQLQueries = {
           }
       }
   }`,
-  listTraineeGrades: `
+	listTraineeGrades: `
     query listTraineeGrades($trainee_id:ID!){
         trainee(id:$trainee_id){
             grades{
@@ -440,7 +841,7 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-  listCustomersInTrainingSession: `
+	listCustomersInTrainingSession: `
   query listCustomersInTrainingSession($session_id:ID!)
   {
     trainingSession(id:$session_id)
@@ -471,7 +872,7 @@ export const digifromaGraphQLQueries = {
         }
     }
   }`,
-  listAllCustomerInTrainingSession: `
+	listAllCustomerInTrainingSession: `
   query listAllCustomerInTrainingSession($session_id:ID!)
   {
     trainingSession(id:$session_id)
@@ -488,7 +889,7 @@ export const digifromaGraphQLQueries = {
         }
     }
   }`,
-  listInstructorsInTrainingSession: `
+	listInstructorsInTrainingSession: `
   query listInstructorsInTrainingSession($session_id:ID!)
   {
     trainingSession(id:$session_id)
@@ -502,7 +903,7 @@ export const digifromaGraphQLQueries = {
         }
     }
   }`,
-  listInvoices: `
+	listInvoices: `
     query{
         invoices{
             id
@@ -522,7 +923,7 @@ export const digifromaGraphQLQueries = {
             prefix
         }
     }`,
-  listInvoicePayments: `
+	listInvoicePayments: `
     query listInvoicePayments($invoice_id:ID!)
     {
         invoice(id:$invoice_id)
@@ -536,7 +937,7 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-  listProgramCategories: `
+	listProgramCategories: `
     query{
         programCategories{
             id
@@ -544,7 +945,7 @@ export const digifromaGraphQLQueries = {
             name
         }
     }`,
-  listContacts: `
+	listContacts: `
     query listContacts($company_id:ID!)
     {
         company(id:$company_id)
@@ -562,7 +963,7 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-  listTrainingSubSessions: `
+	listTrainingSubSessions: `
     query listTrainingSubSessions($session_id:ID!)
     {
         trainingSession(id:$session_id)
@@ -582,7 +983,7 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-  listProgramDiplomas: `
+	listProgramDiplomas: `
     query listProgramDiplomas
     {
         programDiplomas
@@ -591,7 +992,7 @@ export const digifromaGraphQLQueries = {
             name
         }
     }`,
-  listProgramSpecialties: `
+	listProgramSpecialties: `
     query listProgramSpecialties
     {
         programSpecialties
@@ -601,7 +1002,7 @@ export const digifromaGraphQLQueries = {
         }
         
     }`,
-  listManagers: `
+	listManagers: `
     query lisManagers{
         managers
         {
@@ -612,14 +1013,14 @@ export const digifromaGraphQLQueries = {
             type
         }
     }`,
-  listMarketplaceCategories: `
+	listMarketplaceCategories: `
   query listMarketplaceCategories{
         marketplaceCategories{
             id
             name
         }
     }`,
-  listRooms: `
+	listRooms: `
     query{
         rooms{
             id

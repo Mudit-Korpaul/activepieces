@@ -67,6 +67,11 @@ export class DigiformaClient {
 	async listComapnies() {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listComapnies);
 	}
+	async searchCompanies(dateFilters: { updatedAfter: string }) {
+		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.searchCompanies, {
+			date_filters: dateFilters,
+		});
+	}
 	async listContactsInCompany(id: string) {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listContacts, {
 			company_id: id,
@@ -85,6 +90,11 @@ export class DigiformaClient {
 	}
 	async listCustomers() {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listCustomers);
+	}
+	async searchCustomers(dateFilters: { updatedAfter: string }) {
+		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.searchCustomers, {
+			date_filters: dateFilters,
+		});
 	}
 	async createCustomer(request: CreateCustomerInput) {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLMutations.createCustomer, {
@@ -114,6 +124,11 @@ export class DigiformaClient {
 	async listTrainees() {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listTrainees);
 	}
+	async searchTrainees(dateFilters: { updatedAfter: string }) {
+		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.searchTrainees, {
+			date_filters: dateFilters,
+		});
+	}
 	async createTrainee(request: TraineeInput) {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLMutations.createTrainee, {
 			trainee_input: request,
@@ -139,11 +154,21 @@ export class DigiformaClient {
 	async listPrograms() {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listPrograms);
 	}
+	async searchPrograms(dateFilters: { updatedAfter: string }) {
+		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.searchPrograms, {
+			date_filters: dateFilters,
+		});
+	}
 	async listProgramCategories() {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listProgramCategories);
 	}
 	async listInstructors() {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listInstructors);
+	}
+	async searchInstructors(dateFilters: { updatedAfter: string }) {
+		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.searchInstructors, {
+			date_filters: dateFilters,
+		});
 	}
 	async createInstructor(request: InstructorInput) {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLMutations.createInstructor, {
@@ -171,6 +196,11 @@ export class DigiformaClient {
 	}
 	async listFundingAgencies() {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listFundingAgencies);
+	}
+	async searchFundingAgencies(dateFilters: { updatedAfter: string }) {
+		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.searchFundingAgencies, {
+			date_filters: dateFilters,
+		});
 	}
 	async addInstructorToSlot(slot_id: string, training_session_instructor_id: string) {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLMutations.addInstructorToSlot, {
@@ -220,6 +250,11 @@ export class DigiformaClient {
 	}
 	async listTrainingSessions() {
 		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.listTrainingSessions);
+	}
+	async searchTrainingSessions(dateFilters: { updatedAfter: string }) {
+		return await this.makeRequest(HttpMethod.POST, digifromaGraphQLQueries.searchTrainingSessions, {
+			date_filters: dateFilters,
+		});
 	}
 	async listTraineesInTrainingSession(id: string) {
 		return await this.makeRequest(

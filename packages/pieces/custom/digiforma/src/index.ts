@@ -43,6 +43,13 @@ import { listTrainingSessionsAction } from './lib/actions/training-session/list-
 import { removeTraineeFromTrainingSessionAction } from './lib/actions/training-session/remove-trainee-from-training-session';
 import { updateSlotInTrainingSessionAction } from './lib/actions/training-session/update-slot-in-training-session';
 import { updateTrainingSessionAction } from './lib/actions/training-session/update-training-session';
+import { newOrUpdatedInstructorTrigger } from './lib/triggers/new-or-updated-instructor';
+import { newOrUpdatedCompanyTrigger } from './lib/triggers/new-or-updated-company';
+import { newOrUpdatedCustomerTrigger } from './lib/triggers/new-or-updated-customer';
+import { newOrUpdatedTrainingSessionTrigger } from './lib/triggers/new-or-updated-training-session';
+import { newOrUpdatedTraineeTrigger } from './lib/triggers/new-or-updated-trainee';
+import { newOrUpdatedFundingAgencyTrigger } from './lib/triggers/new-or-updated-funding-agency';
+import { newOrUpdatedProgramTrigger } from './lib/triggers/new-or-updated-program';
 
 export const digiformaAuth = PieceAuth.SecretText({
 	displayName: 'Token',
@@ -106,5 +113,13 @@ export const digiforma = createPiece({
 		updateCustomerFundingAction,
 		createSubsessionAction,
 	],
-	triggers: [],
+	triggers: [
+		newOrUpdatedInstructorTrigger,
+		newOrUpdatedCompanyTrigger,
+		newOrUpdatedCustomerTrigger,
+		newOrUpdatedTrainingSessionTrigger,
+		newOrUpdatedTraineeTrigger,
+		newOrUpdatedFundingAgencyTrigger,
+		newOrUpdatedProgramTrigger,
+	],
 });
