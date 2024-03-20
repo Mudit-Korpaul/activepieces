@@ -27,8 +27,20 @@
         "packages/ee/project-members/src/index.ts"
       ],
       "@activepieces/engine": ["packages/engine/src/main.ts"],
+      "@activepieces/piece-activecampaign": [
+        "packages/pieces/community/activecampaign/src/index.ts"
+      ],
       "@activepieces/piece-activepieces": [
         "packages/pieces/community/activepieces/src/index.ts"
+      ],
+      "@activepieces/piece-activity": [
+        "packages/pieces/community/activity/src/index.ts"
+      ],
+      "@activepieces/piece-acumbamail": [
+        "packages/pieces/community/acumbamail/src/index.ts"
+      ],
+      "@activepieces/piece-afforai": [
+        "packages/pieces/community/afforai/src/index.ts"
       ],
       "@activepieces/piece-airtable": [
         "packages/pieces/community/airtable/src/index.ts"
@@ -260,6 +272,9 @@
       "@activepieces/piece-jotform": [
         "packages/pieces/community/jotform/src/index.ts"
       ],
+      "@activepieces/piece-json": [
+        "packages/pieces/community/json/src/index.ts"
+      ],
       "@activepieces/piece-kimai": [
         "packages/pieces/community/kimai/src/index.ts"
       ],
@@ -307,6 +322,9 @@
       ],
       "@activepieces/piece-mautic": [
         "packages/pieces/community/mautic/src/index.ts"
+      ],
+      "@activepieces/piece-microsoft-dynamics-crm": [
+        "packages/ee/pieces/microsoft-dynamics-crm/src/index.ts"
       ],
       "@activepieces/piece-microsoft-excel-365": [
         "packages/pieces/community/microsoft-excel-365/src/index.ts"
@@ -441,6 +459,9 @@
       "@activepieces/piece-stability-ai": [
         "packages/pieces/community/stability-ai/src/index.ts"
       ],
+      "@activepieces/piece-stable-diffusion-webui": [
+        "packages/pieces/community/stable-diffusion-webui/src/index.ts"
+      ],
       "@activepieces/piece-store": [
         "packages/pieces/community/store/src/index.ts"
       ],
@@ -501,11 +522,17 @@
       "@activepieces/piece-webflow": [
         "packages/pieces/community/webflow/src/index.ts"
       ],
+      "@activepieces/piece-webhook": [
+        "packages/pieces/community/webhook/src/index.ts"
+      ],
       "@activepieces/piece-whatsable": [
         "packages/pieces/community/whatsable/src/index.ts"
       ],
       "@activepieces/piece-woocommerce": [
         "packages/pieces/community/woocommerce/src/index.ts"
+      ],
+      "@activepieces/piece-wootric": [
+        "packages/pieces/community/wootric/src/index.ts"
       ],
       "@activepieces/piece-wordpress": [
         "packages/pieces/community/wordpress/src/index.ts"
@@ -534,9 +561,6 @@
       ],
       "@activepieces/pieces-framework": [
         "packages/pieces/community/framework/src/index.ts"
-      ],
-      "@activepieces/pieces-wootric": [
-        "packages/pieces/community/wootric/src/index.ts"
       ],
       "@activepieces/shared": ["packages/shared/src/index.ts"],
       "@activepieces/ui-canvas-utils": [

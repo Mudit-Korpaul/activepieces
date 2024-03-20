@@ -84,7 +84,7 @@ export const flowVersionService = {
     }: ApplyOperationParams): Promise<FlowVersion> {
         let operations: FlowOperationRequest[] = []
         let mutatedFlowVersion: FlowVersion = flowVersion
-        
+
         switch (userOperation.type) {
             case FlowOperationType.USE_AS_DRAFT: {
                 const previousVersion = await flowVersionService.getFlowVersionOrThrow({
@@ -219,8 +219,9 @@ export const flowVersionService = {
         flowId,
         versionId,
         removeSecrets = false,
+        entityManager,
     }: GetFlowVersionOrThrowParams): Promise<FlowVersion> {
-        let flowVersion: FlowVersion | null = await flowVersionRepo().findOne({
+        const flowVersion: FlowVersion | null = await flowVersionRepo(entityManager).findOne({
             where: {
                 flowId,
                 id: versionId,
@@ -242,11 +243,9 @@ export const flowVersionService = {
             })
         }
 
-        if (removeSecrets) {
-            flowVersion = await removeSecretsFromFlow(flowVersion)
-        }
-
-        return flowVersion
+        return removeSecrets
+            ? removeSecretsFromFlow(flowVersion)
+            : flowVersion
     },
     async createEmptyVersion(
         flowId: FlowId,
@@ -346,6 +345,12 @@ function handleImportFlowOperation(
     operations.push({
         type: FlowOperationType.UPDATE_TRIGGER,
         request: operation.trigger,
+    })
+    operations.push({
+        type: FlowOperationType.CHANGE_NAME,
+        request: {
+            displayName: operation.displayName,
+        },
     })
     operations.push(...flowHelper.getImportOperations(operation.trigger))
     return operations
@@ -452,9 +457,6 @@ async function prepareRequest(
                         settings: clonedRequest.request.settings,
                         projectId,
                     })
-                    break
-                default:
-                    clonedRequest.request.valid = true
                     break
             }
             break
@@ -636,6 +638,7 @@ type GetFlowVersionOrThrowParams = {
     flowId: FlowId
     versionId: FlowVersionId | undefined
     removeSecrets?: boolean
+    entityManager?: EntityManager
 }
 
 type NewFlowVersion = Omit<FlowVersion, 'created' | 'updated'>

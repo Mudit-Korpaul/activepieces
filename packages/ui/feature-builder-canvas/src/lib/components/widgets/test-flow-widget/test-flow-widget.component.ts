@@ -9,10 +9,12 @@ import {
 import { Store } from '@ngrx/store';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import {
-  ExecutionOutputStatus,
+  FlowRunStatus,
   FlowRun,
   PopulatedFlow,
   TriggerType,
+  WebsocketClientEvent,
+  WebsocketServerEvent,
 } from '@activepieces/shared';
 import {
   BuilderSelectors,
@@ -30,8 +32,8 @@ import { canvasActions } from '@activepieces/ui/feature-builder-store';
 })
 export class TestFlowWidgetComponent implements OnInit {
   triggerType = TriggerType;
-  statusEnum = ExecutionOutputStatus;
-  instanceRunStatus$: Observable<undefined | ExecutionOutputStatus>;
+  statusEnum = FlowRunStatus;
+  instanceRunStatus$: Observable<undefined | FlowRunStatus>;
   isSaving$: Observable<boolean> = of(false);
   selectedFlow$: Observable<PopulatedFlow | undefined>;
   instanceRunStatusChecker$: Observable<FlowRun>;
@@ -82,13 +84,13 @@ export class TestFlowWidgetComponent implements OnInit {
   }
 
   executeTest(flow: PopulatedFlow) {
-    this.websockService.socket.emit('testFlowRun', {
+    this.websockService.socket.emit(WebsocketServerEvent.TEST_FLOW_RUN, {
       flowVersionId: flow.version.id,
       projectId: flow.projectId,
     });
 
     this.executeTest$ = this.websockService.socket
-      .fromEvent<FlowRun>('flowRunStarted')
+      .fromEvent<FlowRun>(WebsocketClientEvent.TEST_FLOW_RUN_STARTED)
       .pipe(
         take(1),
         tap((flowRun) => {
@@ -110,11 +112,11 @@ export class TestFlowWidgetComponent implements OnInit {
       );
 
     this.testResult$ = this.websockService.socket
-      .fromEvent<FlowRun>('flowRunFinished')
+      .fromEvent<FlowRun>(WebsocketClientEvent.TEST_FLOW_RUN_FINSIHED)
       .pipe(
-        switchMap((flowRun) =>
-          this.instanceRunService.get((flowRun as FlowRun).id)
-        ),
+        switchMap((flowRun) => {
+          return this.instanceRunService.get(flowRun.id);
+        }),
         tap((instanceRun) => {
           this.store.dispatch(canvasActions.setRun({ run: instanceRun }));
         })

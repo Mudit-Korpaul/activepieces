@@ -33,10 +33,7 @@ import {
 import { PiecePropertiesFormValue } from '@activepieces/ui/feature-builder-form-controls';
 import { PieceTriggerInputFormSchema } from '../../input-forms-schema';
 import { PiecePropertyMap } from '@activepieces/pieces-framework';
-import {
-  CORE_SCHEDULE,
-  PieceMetadataService,
-} from '@activepieces/ui/feature-pieces';
+import { PieceMetadataService } from '@activepieces/ui/feature-pieces';
 
 declare type TriggerDropdownOption = {
   label: {
@@ -77,7 +74,6 @@ const PIECE_PROPERTIES_FORM_CONTROL_NAME = 'configs';
 export class PieceTriggerInputFormComponent {
   readonly TRIGGER_FORM_CONTROL_NAME = TRIGGER_FORM_CONTROL_NAME;
   readonly CONFIGS_FORM_CONTROL_NAME = PIECE_PROPERTIES_FORM_CONTROL_NAME;
-  CORE_SCHEDULE = CORE_SCHEDULE;
   pieceTriggerInputForm: UntypedFormGroup;
   initialSetup$: Observable<TriggerDropdownOption[]>;
   packageType: PackageType;
@@ -85,10 +81,7 @@ export class PieceTriggerInputFormComponent {
   pieceName: string;
   pieceDisplayName: string;
   pieceVersion: string;
-  initialComponentTriggerInputFormValue: {
-    triggerName: string;
-    input: { [key: string]: any };
-  } | null;
+  initialComponentTriggerInputFormValue: PieceTriggerInputFormSchema | null;
   selectedTrigger$: Observable<any>;
   triggers$: Observable<TriggerDropdownOption[]>;
   valueChanges$: Observable<void>;
@@ -107,7 +100,7 @@ export class PieceTriggerInputFormComponent {
 
   constructor(
     private fb: UntypedFormBuilder,
-    private actionMetaDataService: PieceMetadataService,
+    private pieceService: PieceMetadataService,
     private cd: ChangeDetectorRef,
     private store: Store
   ) {
@@ -147,10 +140,7 @@ export class PieceTriggerInputFormComponent {
   }
 
   fetchTriggers(pieceName: string, pieceVersion: string) {
-    const piece$ = this.actionMetaDataService.getPieceMetadata(
-      pieceName,
-      pieceVersion
-    );
+    const piece$ = this.pieceService.getPieceMetadata(pieceName, pieceVersion);
 
     this.triggers$ = piece$.pipe(
       map((pieceMetadata) => {
@@ -222,6 +212,9 @@ export class PieceTriggerInputFormComponent {
               properties: properties,
               propertiesValues: propertiesValues,
               setDefaultValues: false,
+              customizedInputs:
+                this.initialComponentTriggerInputFormValue?.inputUiInfo
+                  ?.customizedInputs || {},
             };
             this.pieceTriggerInputForm.addControl(
               PIECE_PROPERTIES_FORM_CONTROL_NAME,
@@ -312,6 +305,7 @@ export class PieceTriggerInputFormComponent {
       properties: properties,
       propertiesValues: {},
       setDefaultValues: true,
+      customizedInputs: {},
     };
     if (!propertiesForm) {
       this.pieceTriggerInputForm.addControl(
@@ -329,6 +323,7 @@ export class PieceTriggerInputFormComponent {
   getFormattedFormData(): {
     triggerName: string;
     input: { [configKey: string]: any };
+    inputUiInfo: { customizedInputs?: Record<string, boolean> };
   } {
     const trigger = this.pieceTriggerInputForm.get(
       TRIGGER_FORM_CONTROL_NAME
@@ -339,8 +334,9 @@ export class PieceTriggerInputFormComponent {
     const res = {
       triggerName: trigger?.triggerName,
       input: {
-        ...configs,
+        ...configs.input,
       },
+      inputUiInfo: { customizedInputs: configs.customizedInputs },
     };
     return res;
   }

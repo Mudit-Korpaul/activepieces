@@ -1,82 +1,113 @@
-import { ActionType, StepOutput, TriggerType, applyFunctionToValues } from '@activepieces/shared'
+import { StepOutput, isNil, isObject } from '@activepieces/shared'
+import PriorityQueue from 'priority-queue-typescript'
 import sizeof from 'object-sizeof'
-import { isMemoryFilePath } from '../services/files.service'
 
 const TRUNCATION_TEXT_PLACEHOLDER = '(truncated)'
-const MAX_SINGLE_SIZE_FOR_SINGLE_ENTRY = 512 * 1024
+const MAX_SIZE_FOR_ALL_ENTRIES = 1024 * 1024
+const SIZE_OF_TRUNCATION_TEXT_PLACEHOLDER = sizeof(TRUNCATION_TEXT_PLACEHOLDER)
 
 export const loggingUtils = {
     async trimExecution(steps: Record<string, StepOutput>): Promise<Record<string, StepOutput>> {
-        const clonedSteps = { ...steps }
-        for (const stepName in steps) {
-            const stepOutput = steps[stepName]
-            clonedSteps[stepName] = await trimStepOutput(stepOutput)
+        const totalJsonSize = sizeof(steps)
+        if (!jsonExceedMaxSize(totalJsonSize)) {
+            return steps
         }
-        return clonedSteps
+        return removeLeavesInTopologicalOrder(JSON.parse(JSON.stringify(steps)))
     },
 }
 
-async function trimStepOutput(stepOutput: StepOutput): Promise<StepOutput> {
-    const modified: StepOutput = JSON.parse(JSON.stringify(stepOutput))
-    modified.input = await applyFunctionToValues(modified.input, trim)
-    switch (modified.type) {
-        case ActionType.BRANCH:
-        case TriggerType.WEBHOOK:
-        case TriggerType.EMPTY:
-        case TriggerType.PIECE:
-            modified.output = await applyFunctionToValues(modified.output, trim)
-            break
-        case ActionType.LOOP_ON_ITEMS: {
-            const loopItem = modified.output
-            if (loopItem) {
-                loopItem.iterations = await applyFunctionToValues(loopItem.iterations, trim)
-                loopItem.item = await applyFunctionToValues(loopItem.item, trim)
+function removeLeavesInTopologicalOrder(json: Record<string, unknown>): Record<string, StepOutput> {
+    const nodes: Node[] = traverseJsonAndConvertToNodes(json)
+    const leaves = new PriorityQueue<Node>(
+        undefined,
+        (a: Node, b: Node) => b.size - a.size,
+    )
+    nodes.filter((node) => node.numberOfChildren === 0).forEach((node) => leaves.add(node))
+    let totalJsonSize = sizeof(json)
+
+    while (!leaves.empty() && jsonExceedMaxSize(totalJsonSize)) {
+        const curNode = leaves.poll()
+        if (curNode) {
+            totalJsonSize += SIZE_OF_TRUNCATION_TEXT_PLACEHOLDER - curNode.size
+            nodes[curNode.dfsOrder.index].truncate = true
+            const parentIndex = curNode.dfsOrder.parentIndex
+            if (!isNil(parentIndex)) {
+                nodes[parentIndex].numberOfChildren--
+                if (nodes[parentIndex].numberOfChildren == 0) {
+                    leaves.add(nodes[parentIndex])
+                }
             }
-            break
         }
-        case ActionType.CODE:
-        case ActionType.PIECE:
     }
-    modified.errorMessage = await applyFunctionToValues(modified.errorMessage, trim)
-    return modified
+    return truncateTrimmedNodes(json, nodes) as Record<string, StepOutput>
 }
 
-const trim = async (obj: unknown): Promise<unknown> => {
-    if (isMemoryFilePath(obj)) {
+function truncateTrimmedNodes(curNode: unknown, nodes: Node[], currentDfsOrder: { index: number } = { index: -1 }) {
+    currentDfsOrder.index++
+    const truncated = nodes[currentDfsOrder.index].truncate
+    let newValue
+    if (isObject(curNode)) {
+        newValue = {}
+        Object.keys(curNode).forEach((key) => {
+            curNode[key] = truncateTrimmedNodes(curNode[key], nodes, currentDfsOrder)
+        })
+        newValue = curNode
+    }
+    else if (Array.isArray(curNode)) {
+        newValue = []
+        curNode.forEach((value, _index) => {
+            newValue.push(truncateTrimmedNodes(value, nodes, currentDfsOrder))
+        })
+    }
+    else {
+        newValue = curNode
+    }
+    if (truncated) {
         return TRUNCATION_TEXT_PLACEHOLDER
     }
+    return newValue
+}
 
-    if (objectExceedMaxSize(obj) && isObject(obj)) {
-        const objectEntries = Object.entries(obj).sort(bySizeDesc)
-        let i = 0
+function traverseJsonAndConvertToNodes(curNode: unknown, parentIndex: number | null = null, currentDfsOrder: { index: number } = { index: -1 }) {
+    currentDfsOrder.index++
+    const children = findChildren(curNode)
+    const nodes = [{
+        size: sizeof(curNode),
+        dfsOrder: {
+            index: currentDfsOrder.index,
+            parentIndex,
+        },
+        numberOfChildren: children.length,
+        truncate: false,
+    }]
+    const newParentIndex = currentDfsOrder.index
+    children.forEach((childValue) => {
+        nodes[0].size += SIZE_OF_TRUNCATION_TEXT_PLACEHOLDER - sizeof(childValue)
+        nodes.push(...traverseJsonAndConvertToNodes(childValue, newParentIndex, currentDfsOrder))
+    })
+    return nodes
+}
 
-        while (i < objectEntries.length && objectEntriesExceedMaxSize(objectEntries)) {
-            const key = objectEntries[i][0]
-            obj[key] = TRUNCATION_TEXT_PLACEHOLDER
-            i += 1
-        }
+function findChildren(curNode: unknown): unknown[] {
+    if (isObject(curNode)) {
+        return Object.values(curNode)
     }
-
-    if (!objectExceedMaxSize(obj)) {
-        return obj
+    if (Array.isArray(curNode)) {
+        return curNode
     }
-
-    return TRUNCATION_TEXT_PLACEHOLDER
+    return []
 }
 
-const objectEntriesExceedMaxSize = (objectEntries: [string, unknown][]): boolean => {
-    const obj = Object.fromEntries(objectEntries)
-    return objectExceedMaxSize(obj)
+const jsonExceedMaxSize = (jsonSize: number): boolean => {
+    return jsonSize > MAX_SIZE_FOR_ALL_ENTRIES
 }
 
-const objectExceedMaxSize = (obj: unknown): boolean => {
-    return sizeof(obj) > MAX_SINGLE_SIZE_FOR_SINGLE_ENTRY
-}
-
-const isObject = (obj: unknown): obj is Record<string, unknown> => {
-    return typeof obj === 'object' && !Array.isArray(obj) && obj !== null
-}
-
-const bySizeDesc = (a: [string, unknown], b: [string, unknown]): number => {
-    return sizeof(b[1]) - sizeof(a[1])
+type Node = {
+    size: number
+    dfsOrder: {
+        index: number
+        parentIndex: number | null
+    }
+    numberOfChildren: number
+    truncate: boolean
 }

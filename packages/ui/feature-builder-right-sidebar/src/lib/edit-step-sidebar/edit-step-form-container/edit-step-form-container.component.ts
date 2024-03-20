@@ -72,7 +72,7 @@ export class EditStepFormContainerComponent {
     private store: Store,
     private snackbar: MatSnackBar,
     private flagService: FlagService,
-    private actionMetaService: PieceMetadataService,
+    private pieceService: PieceMetadataService,
     private builderService: FlowBuilderService
   ) {
     this.webhookUrl$ = forkJoin({
@@ -101,8 +101,8 @@ export class EditStepFormContainerComponent {
 
   updateFormValue(stepSelected: Step) {
     const settingsControl = this.stepForm.controls.settings;
-    this.setInitialFormValue$ = this.store
-      .select(BuilderSelectors.selectFlowItemDetails(stepSelected))
+    this.setInitialFormValue$ = this.pieceService
+      .getStepDetails(stepSelected)
       .pipe(
         take(1),
         tap((res) => {
@@ -134,7 +134,7 @@ export class EditStepFormContainerComponent {
             }),
             switchMap((res) => {
               if (res?.type === TriggerType.PIECE) {
-                return this.actionMetaService
+                return this.pieceService
                   .getPieceMetadata(
                     res.settings.pieceName,
                     res.settings.pieceVersion
@@ -152,23 +152,14 @@ export class EditStepFormContainerComponent {
             }),
             debounceTime(350),
             tap((res) => {
-              if (
-                this._selectedStep.type === TriggerType.PIECE ||
-                this._selectedStep.type === TriggerType.WEBHOOK
-              ) {
-                if (this._selectedStep.type === TriggerType.WEBHOOK) {
-                  this.updateNonAppWebhookTrigger(res.step!);
+              if (this._selectedStep.type === TriggerType.PIECE) {
+                const newTriggerSettings = this.createPieceSettings(res.step!);
+                const trigger =
+                  res.metadata?.triggers[newTriggerSettings.triggerName];
+                if (trigger?.type === TriggerStrategy.APP_WEBHOOK) {
+                  this.updateAppWebhookTrigger(res.step!, trigger);
                 } else {
-                  const newTriggerSettings = this.createPieceSettings(
-                    res.step!
-                  );
-                  const trigger =
-                    res.metadata?.triggers[newTriggerSettings.triggerName];
-                  if (trigger?.type === TriggerStrategy.APP_WEBHOOK) {
-                    this.updateAppWebhookTrigger(res.step!, trigger);
-                  } else {
-                    this.updateNonAppWebhookTrigger(res.step!);
-                  }
+                  this.updateNonAppWebhookTrigger(res.step!);
                 }
               } else {
                 this.store.dispatch(
@@ -255,9 +246,6 @@ export class EditStepFormContainerComponent {
         return this.createPieceSettings(currentStep);
       }
       case TriggerType.EMPTY:
-      case TriggerType.WEBHOOK: {
-        return inputControlValue;
-      }
       case ActionType.LOOP_ON_ITEMS:
       case ActionType.BRANCH: {
         const settings: BranchActionSettings | LoopOnItemsActionSettings = {

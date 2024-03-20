@@ -1,9 +1,7 @@
 import {
     KeyAlgorithm,
     SigningKey,
-    Platform,
     OAuthApp,
-    FilteredPieceBehavior,
     CustomDomain,
     CustomDomainStatus,
     OtpModel,
@@ -11,7 +9,6 @@ import {
     OtpState,
     ProjectMember,
     ApiKey,
-    ProjectMemberRole,
     ProjectMemberStatus,
     GitRepo,
     ApplicationEvent,
@@ -24,7 +21,7 @@ import {
     apId,
     Project,
     NotificationStatus,
-    ProjectType,
+    ProjectMemberRole,
     PieceType,
     PackageType,
     Flow,
@@ -35,8 +32,13 @@ import {
     FlowTemplate,
     TemplateType,
     FlowRun,
-    ExecutionOutputStatus,
+    FlowRunStatus,
     RunEnvironment,
+    Platform,
+    FilteredPieceBehavior,
+    File,
+    FileCompression,
+    FileType,
 } from '@activepieces/shared'
 import { faker } from '@faker-js/faker'
 import { PieceMetadataSchema } from '../../../src/app/pieces/piece-metadata-entity'
@@ -45,6 +47,7 @@ import { OAuthAppWithEncryptedSecret } from '../../../src/app/ee/oauth-apps/oaut
 import { encryptString } from '../../../src/app/helper/encryption'
 import dayjs from 'dayjs'
 import { generateApiKey } from '../../../src/app/ee/api-keys/api-key-service'
+import { databaseConnection } from '../../../src/app/database/database-connection'
 
 export const CLOUD_PLATFORM_ID = 'cloud-id'
 
@@ -108,11 +111,11 @@ export const createMockProject = (project?: Partial<Project>): Project => {
         id: project?.id ?? apId(),
         created: project?.created ?? faker.date.recent().toISOString(),
         updated: project?.updated ?? faker.date.recent().toISOString(),
+        deleted: project?.deleted ?? null,
         ownerId: project?.ownerId ?? apId(),
         displayName: project?.displayName ?? faker.lorem.word(),
         notifyStatus:
-      project?.notifyStatus ?? faker.helpers.enumValue(NotificationStatus),
-        type: project?.type ?? faker.helpers.enumValue(ProjectType),
+            project?.notifyStatus ?? faker.helpers.enumValue(NotificationStatus),
         platformId: project?.platformId ?? apId(),
         externalId: project?.externalId ?? apId(),
     }
@@ -127,6 +130,7 @@ export const createMockGitRepo = (gitRepo?: Partial<GitRepo>): GitRepo => {
         remoteUrl: gitRepo?.remoteUrl ?? `git@${faker.internet.url()}`,
         sshPrivateKey: gitRepo?.sshPrivateKey ?? faker.internet.password(),
         branch: gitRepo?.branch ?? faker.lorem.word(),
+        slug: gitRepo?.slug ?? faker.lorem.word(),
     }
 }
 
@@ -149,8 +153,8 @@ export const createMockPlatform = (platform?: Partial<Platform>): Platform => {
         filteredPieceNames: platform?.filteredPieceNames ?? [],
         ssoEnabled: platform?.ssoEnabled ?? faker.datatype.boolean(),
         filteredPieceBehavior:
-      platform?.filteredPieceBehavior ??
-      faker.helpers.enumValue(FilteredPieceBehavior),
+            platform?.filteredPieceBehavior ??
+            faker.helpers.enumValue(FilteredPieceBehavior),
         smtpHost: platform?.smtpHost ?? faker.internet.domainName(),
         smtpPort: platform?.smtpPort ?? faker.internet.port(),
         smtpUser: platform?.smtpUser ?? faker.internet.userName(),
@@ -163,6 +167,7 @@ export const createMockPlatform = (platform?: Partial<Platform>): Platform => {
         embeddingEnabled: platform?.embeddingEnabled ?? faker.datatype.boolean(),
         cloudAuthEnabled: platform?.cloudAuthEnabled ?? faker.datatype.boolean(),
         showPoweredBy: platform?.showPoweredBy ?? faker.datatype.boolean(),
+        showActivityLog: platform?.showActivityLog ?? faker.datatype.boolean(),
     }
 }
 
@@ -202,7 +207,7 @@ export const createMockProjectMember = (
         projectId: projectMember?.projectId ?? apId(),
         role: projectMember?.role ?? faker.helpers.enumValue(ProjectMemberRole),
         status:
-      projectMember?.status ?? faker.helpers.enumValue(ProjectMemberStatus),
+            projectMember?.status ?? faker.helpers.enumValue(ProjectMemberStatus),
     }
 }
 
@@ -266,7 +271,6 @@ export const createMockSigningKey = (
         displayName: signingKey?.displayName ?? faker.lorem.word(),
         platformId: signingKey?.platformId ?? apId(),
         publicKey: signingKey?.publicKey ?? MOCK_SIGNING_KEY_PUBLIC_KEY,
-        generatedBy: signingKey?.generatedBy ?? apId(),
         algorithm: signingKey?.algorithm ?? KeyAlgorithm.RSA,
     }
 }
@@ -281,7 +285,7 @@ export const createProjectMember = (
         projectId: projectMember.projectId ?? apId(),
         role: projectMember.role ?? faker.helpers.enumValue(ProjectMember.Role),
         status:
-      projectMember.status ?? faker.helpers.enumValue(ProjectMember.Status),
+            projectMember.status ?? faker.helpers.enumValue(ProjectMember.Status),
         created: projectMember.created ?? faker.date.recent().toISOString(),
         updated: projectMember.updated ?? faker.date.recent().toISOString(),
     }
@@ -301,6 +305,7 @@ export const createMockPieceMetadata = (
         projectId: pieceMetadata?.projectId,
         directoryPath: pieceMetadata?.directoryPath,
         auth: pieceMetadata?.auth,
+        authors: pieceMetadata?.authors ?? [],
         platformId: pieceMetadata?.platformId,
         version: pieceMetadata?.version ?? faker.system.semver(),
         minimumSupportedRelease: pieceMetadata?.minimumSupportedRelease ?? '0.0.0',
@@ -309,7 +314,7 @@ export const createMockPieceMetadata = (
         triggers: pieceMetadata?.triggers ?? {},
         pieceType: pieceMetadata?.pieceType ?? faker.helpers.enumValue(PieceType),
         packageType:
-      pieceMetadata?.packageType ?? faker.helpers.enumValue(PackageType),
+            pieceMetadata?.packageType ?? faker.helpers.enumValue(PackageType),
         archiveId: pieceMetadata?.archiveId,
     }
 }
@@ -350,14 +355,14 @@ export const createMockOtp = (otp?: Partial<OtpModel>): OtpModel => {
         id: otp?.id ?? apId(),
         created: otp?.created ?? faker.date.recent().toISOString(),
         updated:
-      otp?.updated ??
-      faker.date
-          .between({ from: twentyMinutesAgo.toDate(), to: now.toDate() })
-          .toISOString(),
+            otp?.updated ??
+            faker.date
+                .between({ from: twentyMinutesAgo.toDate(), to: now.toDate() })
+                .toISOString(),
         type: otp?.type ?? faker.helpers.enumValue(OtpType),
         userId: otp?.userId ?? apId(),
         value:
-      otp?.value ?? faker.number.int({ min: 100000, max: 999999 }).toString(),
+            otp?.value ?? faker.number.int({ min: 100000, max: 999999 }).toString(),
         state: otp?.state ?? faker.helpers.enumValue(OtpState),
     }
 }
@@ -370,15 +375,16 @@ export const createMockFlowRun = (flowRun?: Partial<FlowRun>): FlowRun => {
         projectId: flowRun?.projectId ?? apId(),
         flowId: flowRun?.flowId ?? apId(),
         tags: flowRun?.tags ?? [],
+        steps: {},
         flowVersionId: flowRun?.flowVersionId ?? apId(),
         flowDisplayName: flowRun?.flowDisplayName ?? faker.lorem.word(),
         logsFileId: flowRun?.logsFileId ?? null,
         tasks: flowRun?.tasks,
-        status: flowRun?.status ?? faker.helpers.enumValue(ExecutionOutputStatus),
+        status: flowRun?.status ?? faker.helpers.enumValue(FlowRunStatus),
         startTime: flowRun?.startTime ?? faker.date.recent().toISOString(),
         finishTime: flowRun?.finishTime ?? faker.date.recent().toISOString(),
         environment:
-      flowRun?.environment ?? faker.helpers.enumValue(RunEnvironment),
+            flowRun?.environment ?? faker.helpers.enumValue(RunEnvironment),
     }
 }
 
@@ -431,6 +437,46 @@ export const createMockActivity = (activity?: Partial<Activity>): Activity => {
     }
 }
 
+export const mockBasicSetup = async (params?: MockBasicSetupParams): Promise<MockBasicSetup> => {
+    const mockOwner = createMockUser(params?.user)
+    await databaseConnection.getRepository('user').save(mockOwner)
+
+    const mockPlatform = createMockPlatform({
+        ...params?.platform,
+        ownerId: mockOwner.id,
+    })
+    await databaseConnection.getRepository('platform').save(mockPlatform)
+
+    mockOwner.platformId = mockPlatform.id
+    await databaseConnection.getRepository('user').save(mockOwner)
+
+    const mockProject = createMockProject({
+        ...params?.project,
+        ownerId: mockOwner.id,
+        platformId: mockPlatform.id,
+    })
+    await databaseConnection.getRepository('project').save(mockProject)
+
+    return {
+        mockOwner,
+        mockPlatform,
+        mockProject,
+    }
+}
+
+export const createMockFile = (file?: Partial<File>): File => {
+    return {
+        id: file?.id ?? apId(),
+        created: file?.created ?? faker.date.recent().toISOString(),
+        updated: file?.updated ?? faker.date.recent().toISOString(),
+        platformId: file?.platformId ?? apId(),
+        projectId: file?.projectId ?? apId(),
+        compression: file?.compression ?? faker.helpers.enumValue(FileCompression),
+        data: file?.data ?? Buffer.from(faker.lorem.paragraphs()),
+        type: file?.type ?? faker.helpers.enumValue(FileType),
+    }
+}
+
 type CreateMockPlatformWithOwnerParams = {
     platform?: Partial<Omit<Platform, 'ownerId'>>
     owner?: Partial<Omit<User, 'platformId'>>
@@ -447,4 +493,16 @@ type SetupMockApiKeyServiceAccountParams = CreateMockPlatformWithOwnerParams & {
 
 type SetupMockApiKeyServiceAccountReturn = CreateMockPlatformWithOwnerReturn & {
     mockApiKey: ApiKey & { value: string }
+}
+
+type MockBasicSetup = {
+    mockOwner: User
+    mockPlatform: Platform
+    mockProject: Project
+}
+
+type MockBasicSetupParams = {
+    user?: Partial<User>
+    platform?: Partial<Platform>
+    project?: Partial<Project>
 }

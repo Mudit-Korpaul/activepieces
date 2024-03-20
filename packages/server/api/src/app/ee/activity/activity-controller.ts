@@ -1,12 +1,13 @@
-import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'
-import { ApId, PrincipalType } from '@activepieces/shared'
+import { FastifyPluginAsyncTypebox  } from '@fastify/type-provider-typebox'
+import { Permission, PrincipalType } from '@activepieces/shared'
 import { activityService } from './activity-service'
+import { ListActivityParams } from '@activepieces/ee-shared'
 
 export const activityController: FastifyPluginAsyncTypebox = async (app) => {
     app.get('/', ListActivitiesRequest, async (req) => {
         return activityService.list({
             projectId: req.query.projectId,
-            cursor: req.query.cursor ?? null,
+            cursor: req.query.cursor,
             limit: req.query.limit ?? 10,
         })
     })
@@ -17,12 +18,9 @@ const ListActivitiesRequest = {
         allowedPrincipals: [
             PrincipalType.USER,
         ],
+        permission: Permission.READ_ACTIVITY,
     },
     schema: {
-        querystring: Type.Object({
-            projectId: ApId,
-            cursor: Type.Optional(Type.String()),
-            limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })),
-        }),
+        querystring: ListActivityParams,
     },
 }

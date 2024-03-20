@@ -20,6 +20,7 @@ import * as semver from 'semver'
 import { pieceMetadataServiceHooks as hooks } from './hooks'
 import { projectService } from '../../project/project-service'
 import { toPieceMetadataModelSummary } from '.'
+import dayjs from 'dayjs'
 
 const repo = repoFactory(PieceMetadataEntity)
 
@@ -32,7 +33,7 @@ export const DbPieceMetadataService = (): PieceMetadataService => {
                 version: 'DESC',
             } as const
 
-            const pieceMetadataEntityList = await repo()
+            const originalPieceMetadataEntityList = await repo()
                 .createQueryBuilder()
                 .where([
                     {
@@ -60,12 +61,12 @@ export const DbPieceMetadataService = (): PieceMetadataService => {
                 .orderBy(order)
                 .getMany()
 
-            const pieces = await hooks.get().filterPieces({
+            const filteredPieces = await hooks.get().filterPieces({
                 ...params,
-                pieces: pieceMetadataEntityList,
+                pieces: originalPieceMetadataEntityList,
                 suggestionType: params.suggestionType,
             })
-            return toPieceMetadataModelSummary(pieces, params.suggestionType)
+            return toPieceMetadataModelSummary(filteredPieces, originalPieceMetadataEntityList, params.suggestionType)
         },
 
         async getOrThrow({
@@ -124,6 +125,7 @@ export const DbPieceMetadataService = (): PieceMetadataService => {
                 })
             }
 
+            const created = await findOldestCreataDate({ name: pieceMetadata.name, projectId, platformId })
             return repo().save({
                 id: apId(),
                 projectId,
@@ -131,6 +133,7 @@ export const DbPieceMetadataService = (): PieceMetadataService => {
                 pieceType,
                 archiveId,
                 platformId,
+                created,
                 ...pieceMetadata,
             })
         },
@@ -204,6 +207,20 @@ const constructPieceFilters = async ({
     }
 
     return filters
+}
+
+const findOldestCreataDate = async ({ name, projectId, platformId }: { name: string, projectId: string | undefined, platformId: string | undefined }): Promise<string> => {
+    const piece = await repo().findOne({
+        where: {
+            name,
+            projectId: projectId ?? IsNull(),
+            platformId: platformId ?? IsNull(),
+        },
+        order: {
+            created: 'ASC',
+        },
+    })
+    return piece?.created ?? dayjs().toISOString()
 }
 
 const createOfficialPiecesFilter = (name: string): Record<string, unknown> => ({
