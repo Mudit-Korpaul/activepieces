@@ -17,7 +17,7 @@ const polling: Polling<string, Record<string, unknown>> = {
 
 		return response['data']['customers'].map((customer: any) => {
 			return {
-				epochMilliSeconds: dayjs(customer['updatedAfter']).valueOf(),
+				epochMilliSeconds: dayjs(customer['updatedAt']).valueOf(),
 				data: customer,
 			};
 		});

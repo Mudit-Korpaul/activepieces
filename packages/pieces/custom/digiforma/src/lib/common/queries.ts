@@ -1,5 +1,5 @@
 export const digifromaGraphQLQueries = {
-	listComapnies: `
+  listComapnies: `
   query{
     companies{
             accountingNumber
@@ -19,7 +19,7 @@ export const digifromaGraphQLQueries = {
             website
         }
     }`,
-	searchCompanies: `
+  searchCompanies: `
     query searchCompanies($date_filters:DateFilter){
         companies(dateFilters:$date_filters)
         {
@@ -57,7 +57,7 @@ export const digifromaGraphQLQueries = {
             website
         }
     }`,
-	listCustomers: `
+  listCustomers: `
   query{
     customers{
         accountingNumber
@@ -107,7 +107,7 @@ export const digifromaGraphQLQueries = {
         }
     }
 }`,
-	searchCustomers: `
+  searchCustomers: `
         query searchCustomers($date_filters:DateFilter)
         {
         customers(dateFilters:$date_filters){
@@ -160,7 +160,7 @@ export const digifromaGraphQLQueries = {
             insertedAt
         }
         }`,
-	listQuotations: `
+  listQuotations: `
   query{
     quotations{
         id
@@ -193,7 +193,7 @@ export const digifromaGraphQLQueries = {
         }
     }
 }`,
-	listTrainees: `
+  listTrainees: `
   query{
     trainees{
         academyId
@@ -263,7 +263,7 @@ export const digifromaGraphQLQueries = {
     }
 
   }`,
-	searchTrainees: `
+  searchTrainees: `
     query searchTrainees($date_filters:DateFilter)
     {
         trainees(dateFilters:$date_filters)
@@ -333,7 +333,7 @@ export const digifromaGraphQLQueries = {
             workContractType
         }
     }`,
-	listPrograms: `
+  listPrograms: `
   query{
     programs{
             accessDelay
@@ -436,10 +436,10 @@ export const digifromaGraphQLQueries = {
             }
     }
 }`,
-	searchPrograms: `
+  searchPrograms: `
         query seachPrograms($date_filters:DateFilter)
         {
-        programs(DateFilters:$date_filters)
+        programs(dateFilters:$date_filters)
         {
                 accessDelay
                 id
@@ -541,7 +541,7 @@ export const digifromaGraphQLQueries = {
                 }
         }
         }`,
-	listInstructors: `
+  listInstructors: `
     query{
         instructors{
         academyId
@@ -589,7 +589,7 @@ export const digifromaGraphQLQueries = {
         vat
         }
     }`,
-	searchInstructors: `
+  searchInstructors: `
     query searchInstructors($date_filters:DateFilter)
         {
         instructors(dateFilters:$date_filters)
@@ -639,7 +639,7 @@ export const digifromaGraphQLQueries = {
             vat
         }
     }`,
-	listFundingAgencies: `
+  listFundingAgencies: `
     query{
         fundingAgencies{
             accountingNumber
@@ -666,10 +666,10 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-	searchFundingAgencies: `
+  searchFundingAgencies: `
     query searchFundingAgencies($date_filters:DateFilter)
     {
-        fundingAgencies($DateFilters:$date_filters)
+        fundingAgencies(dateFilters:$date_filters)
         {
             accountingNumber
             city
@@ -695,7 +695,7 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-	listTrainingSessions: `
+  listTrainingSessions: `
     query{
         trainingSessions{
             id
@@ -748,7 +748,7 @@ export const digifromaGraphQLQueries = {
         }
     
     }`,
-	searchTrainingSessions: `
+  searchTrainingSessions: `
     query searchTrainingSessions($date_filters:DateFilter)
     {
         trainingSessions(dateFilters:$date_filters)
@@ -804,7 +804,7 @@ export const digifromaGraphQLQueries = {
         }
     }
     `,
-	listTraineesInTrainingSession: `
+  listTraineesInTrainingSession: `
   query listTraineesInTrainingSession($session_id:ID!)
   {
       trainingSession(id:$session_id)
@@ -830,7 +830,7 @@ export const digifromaGraphQLQueries = {
           }
       }
   }`,
-	listTraineeGrades: `
+  listTraineeGrades: `
     query listTraineeGrades($trainee_id:ID!){
         trainee(id:$trainee_id){
             grades{
@@ -841,7 +841,7 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-	listCustomersInTrainingSession: `
+  listCustomersInTrainingSession: `
   query listCustomersInTrainingSession($session_id:ID!)
   {
     trainingSession(id:$session_id)
@@ -872,7 +872,7 @@ export const digifromaGraphQLQueries = {
         }
     }
   }`,
-	listAllCustomerInTrainingSession: `
+  listAllCustomerInTrainingSession: `
   query listAllCustomerInTrainingSession($session_id:ID!)
   {
     trainingSession(id:$session_id)
@@ -889,7 +889,7 @@ export const digifromaGraphQLQueries = {
         }
     }
   }`,
-	listInstructorsInTrainingSession: `
+  listInstructorsInTrainingSession: `
   query listInstructorsInTrainingSession($session_id:ID!)
   {
     trainingSession(id:$session_id)
@@ -903,7 +903,7 @@ export const digifromaGraphQLQueries = {
         }
     }
   }`,
-	listInvoices: `
+  listInvoices: `
     query{
         invoices{
             id
@@ -923,7 +923,7 @@ export const digifromaGraphQLQueries = {
             prefix
         }
     }`,
-	listInvoicePayments: `
+  listInvoicePayments: `
     query listInvoicePayments($invoice_id:ID!)
     {
         invoice(id:$invoice_id)
@@ -937,7 +937,7 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-	listProgramCategories: `
+  listProgramCategories: `
     query{
         programCategories{
             id
@@ -945,7 +945,7 @@ export const digifromaGraphQLQueries = {
             name
         }
     }`,
-	listContacts: `
+  listContacts: `
     query listContacts($company_id:ID!)
     {
         company(id:$company_id)
@@ -963,7 +963,7 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-	listTrainingSubSessions: `
+  listTrainingSubSessions: `
     query listTrainingSubSessions($session_id:ID!)
     {
         trainingSession(id:$session_id)
@@ -983,7 +983,7 @@ export const digifromaGraphQLQueries = {
             }
         }
     }`,
-	listProgramDiplomas: `
+  listProgramDiplomas: `
     query listProgramDiplomas
     {
         programDiplomas
@@ -992,7 +992,7 @@ export const digifromaGraphQLQueries = {
             name
         }
     }`,
-	listProgramSpecialties: `
+  listProgramSpecialties: `
     query listProgramSpecialties
     {
         programSpecialties
@@ -1002,7 +1002,7 @@ export const digifromaGraphQLQueries = {
         }
         
     }`,
-	listManagers: `
+  listManagers: `
     query lisManagers{
         managers
         {
@@ -1013,14 +1013,14 @@ export const digifromaGraphQLQueries = {
             type
         }
     }`,
-	listMarketplaceCategories: `
+  listMarketplaceCategories: `
   query listMarketplaceCategories{
         marketplaceCategories{
             id
             name
         }
     }`,
-	listRooms: `
+  listRooms: `
     query{
         rooms{
             id

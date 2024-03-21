@@ -17,7 +17,7 @@ const polling: Polling<string, Record<string, unknown>> = {
 
 		return response['data']['fundingAgencies'].map((agency: any) => {
 			return {
-				epochMilliSeconds: dayjs(agency['updatedAfter']).valueOf(),
+				epochMilliSeconds: dayjs(agency['updatedAt']).valueOf(),
 				data: agency,
 			};
 		});
